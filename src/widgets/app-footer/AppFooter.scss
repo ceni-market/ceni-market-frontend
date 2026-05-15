@@ -1,0 +1,105 @@
+$footer-bg: #283447;
+$footer-text: #ffffff;
+
+.app-footer {
+  width: var(--content-width);
+  min-width: var(--content-width);
+  height: 136px;
+  margin: 0 auto;
+  background: $footer-bg;
+
+  &-inner {
+    height: 136px;
+    padding: 24px 350px 16px 35px;
+    display: flex;
+    justify-content: space-between;
+    color: $footer-text;
+  }
+
+  &-left {
+    width: 222px;
+    flex: 0 0 auto;
+  }
+
+  &-brand {
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &-logo {
+    width: 199px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  &-desc {
+    margin-top: 9px;
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  &-desc-line {
+    line-height: 20px;
+  }
+
+  &-right {
+    width: 178px;
+    flex: 0 0 auto;
+  }
+
+  &-title {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  &-help {
+    margin-top: 0;
+    font-size: 10px;
+    font-weight: 300;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  &-info {
+    margin-top: 3px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  &-info-row {
+    display: flex;
+    align-items: center;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+
+  &-info-label {
+    width: 42px;
+    flex: 0 0 auto;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  &-info-value {
+    margin-left: 7px;
+    font-size: 8px;
+    font-weight: 300;
+  }
+
+  &-copy {
+    margin-top: 3px;
+    font-size: 8px;
+    font-weight: 300;
+    line-height: 20px;
+    white-space: nowrap;
+  }
+}

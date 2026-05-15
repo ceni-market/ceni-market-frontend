@@ -1,0 +1,214 @@
+$sub-bg: #f8fafc;
+$sub-surface: #ffffff;
+$sub-primary: #0757c8;
+$sub-primary-soft: #0b63d8;
+$sub-text: var(--text-default);
+$sub-body: #374151;
+$sub-subtle: #667085;
+$sub-time: #9aa3af;
+$sub-success-bg: #daf0d6;
+$sub-success-text: #208a38;
+$sub-shadow: rgba(12, 12, 13, 0.05);
+
+.home-sub {
+  width: var(--content-width);
+  min-width: var(--content-width);
+  height: 150px;
+  margin: 0 auto;
+  background: $sub-bg;
+
+  &-inner {
+    height: 150px;
+  }
+
+  &-content {
+    width: 1170px;
+    height: 150px;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  &-banner {
+    position: relative;
+    height: 150px;
+    overflow: hidden;
+    flex: 0 0 auto;
+    border-radius: 10px;
+  }
+
+  &-donation {
+    width: 503px;
+  }
+
+  &-guide {
+    width: 339px;
+    height: 149px;
+  }
+
+  &-banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &-banner-title,
+  &-banner-desc,
+  &-banner-button {
+    position: absolute;
+    white-space: nowrap;
+  }
+
+  &-banner-title {
+    color: $sub-primary;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  &-banner-desc {
+    color: $sub-primary-soft;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  &-banner-button {
+    height: 34px;
+    padding: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: $sub-primary;
+    border: 1px solid $sub-primary;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  &-donation-title {
+    top: 29px;
+    left: 233px;
+  }
+
+  &-donation-desc {
+    top: 60px;
+    left: 233px;
+  }
+
+  &-donation-button {
+    top: 104px;
+    left: 232px;
+  }
+
+  &-guide-title {
+    top: 29px;
+    left: 24px;
+  }
+
+  &-guide-desc {
+    top: 60px;
+    left: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-guide-desc-line {
+    line-height: normal;
+  }
+
+  &-guide-button {
+    top: 104px;
+    left: 23px;
+  }
+
+  &-recent {
+    width: 287px;
+    height: 149px;
+    padding: 12px 17px 12px;
+    flex: 0 0 auto;
+    background: $sub-surface;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px $sub-shadow;
+  }
+
+  &-recent-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  &-recent-title {
+    color: $sub-text;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  &-recent-more {
+    margin-top: 2px;
+    color: $sub-subtle;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  &-recent-list {
+    margin-top: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  &-recent-item {
+    width: 252px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-recent-left {
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &-recent-badge {
+    height: 18px;
+    padding: 3px 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: $sub-success-text;
+    background: $sub-success-bg;
+    border-radius: 7px;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: normal;
+  }
+
+  &-recent-name {
+    overflow: hidden;
+    color: $sub-body;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: normal;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-recent-time {
+    flex: 0 0 auto;
+    color: $sub-time;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}

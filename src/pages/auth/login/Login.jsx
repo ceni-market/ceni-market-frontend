@@ -1,0 +1,116 @@
+import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
+import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
+import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
+import AppNav from '../../../widgets/app-nav/AppNav.jsx';
+import { Link } from 'react-router-dom';
+import './Login.scss';
+
+const AUTH_STORAGE_KEY = 'ceni-market-auth';
+const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
+
+function LoginField({ id, type, placeholder, icon }) {
+  return (
+    <label className="login-field" htmlFor={id}>
+      <i className={`login-field-icon bi ${icon}`} aria-hidden="true" />
+      <input id={id} name={id} type={type} placeholder={placeholder} />
+    </label>
+  );
+}
+
+function Login() {
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    window.localStorage.setItem(AUTH_STORAGE_KEY, 'logged-in');
+    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+  };
+
+  return (
+    <main className="login-page">
+      <AppHeader />
+      <AppNav />
+
+      <section className="login-shell content-container" data-node-id="444:2417">
+        <div className="login-panel" data-node-id="444:2424">
+          <div className="login-card" data-node-id="444:2426">
+            <header className="login-card-header">
+              <h1>로그인</h1>
+              <p>세니마켓에 오신 것을 환영합니다</p>
+            </header>
+
+            <form className="login-form" onSubmit={handleSubmit}>
+              <LoginField
+                id="login-email"
+                type="email"
+                placeholder="이메일을 입력하세요"
+                icon="bi-person"
+              />
+              <LoginField
+                id="login-password"
+                type="password"
+                placeholder="비밀번호를 입력하세요"
+                icon="bi-lock"
+              />
+
+              <div className="login-options">
+                <label className="login-keep" htmlFor="login-keep">
+                  <input id="login-keep" name="keepLogin" type="checkbox" />
+                  <span>로그인 상태 유지</span>
+                </label>
+                <Link className="login-find" to="/find-password">
+                  비밀번호 찾기 &gt;
+                </Link>
+              </div>
+
+              <button className="login-submit" type="submit">
+                로그인
+              </button>
+            </form>
+
+            <div className="login-divider" aria-hidden="true">
+              <span />
+              <em>또는</em>
+              <span />
+            </div>
+
+            <div className="login-socials">
+              <button className="login-social login-social-google" type="button">
+                <img src="/assets/images/google-icon.png" alt="" />
+                <span>Google 계정으로 로그인</span>
+              </button>
+              <button className="login-social login-social-kakao" type="button">
+                <img src="/assets/images/kakao-icon.png" alt="" />
+                <span>Kakao 계정으로 로그인</span>
+              </button>
+            </div>
+
+            <p className="login-signup">
+              <span>아직 계정이 없으신가요?</span>
+              <Link to="/signup">회원가입 &gt;</Link>
+            </p>
+          </div>
+        </div>
+
+        <aside className="login-intro" data-node-id="444:2419">
+          <div className="login-intro-copy">
+            <strong>
+              세니마켓은 ITCEN 구성원을 위한
+              <span>따뜻한 나눔과 순환의 공간입니다</span>
+            </strong>
+            <p>
+              안 쓰는 물건은 나누고
+              <span>필요한 물건은 합리적으로 구매하세요</span>
+            </p>
+          </div>
+          <div className="login-intro-image">
+            <img src="/assets/images/login-background.png" alt="" />
+          </div>
+        </aside>
+      </section>
+
+      <AppFeatures />
+      <AppFooter />
+    </main>
+  );
+}
+
+export default Login;

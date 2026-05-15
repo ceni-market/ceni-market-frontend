@@ -1,0 +1,139 @@
+$email-confirm-bg: #eaf5ff;
+$email-confirm-primary: #0757c8;
+$email-confirm-text: #1f2937;
+$email-confirm-muted: #667085;
+$email-confirm-placeholder: #9aa6b8;
+$email-confirm-border: #d5deec;
+$email-confirm-panel: #ffffff;
+$email-confirm-notice-bg: #f8fafc;
+
+.email-confirm-page {
+  min-width: var(--content-width);
+  background: #ffffff;
+}
+
+.email-confirm-shell {
+  height: 710px;
+  padding: 45px 70px;
+  background: $email-confirm-bg;
+}
+
+.email-confirm-panel {
+  width: 1101px;
+  height: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 15px;
+  background: $email-confirm-panel;
+  padding: 26px 0;
+}
+
+.email-confirm-icon {
+  width: 130px;
+  height: 130px;
+  margin-top: 66px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #f1f6ff;
+  color: #1f7af3;
+  font-size: 64px;
+  line-height: 1;
+}
+
+.email-confirm-head {
+  margin-top: 20px;
+  text-align: center;
+
+  h1 {
+    color: $email-confirm-text;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 36px;
+    white-space: nowrap;
+  }
+
+  p {
+    margin-top: 16px;
+    color: $email-confirm-muted;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: normal;
+    white-space: nowrap;
+
+    span {
+      display: block;
+    }
+  }
+}
+
+.email-confirm-notice {
+  width: 633px;
+  height: 120px;
+  margin-top: 26px;
+  padding: 26px 20px;
+  border: 1px solid $email-confirm-border;
+  border-radius: 15px;
+  background: $email-confirm-notice-bg;
+}
+
+.email-confirm-notice-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: $email-confirm-muted;
+
+  i {
+    color: #8fa1b9;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  strong {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: normal;
+  }
+}
+
+.email-confirm-notice ul {
+  margin: 9px 0 0 24px;
+  color: $email-confirm-placeholder;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.email-confirm-notice li {
+  &::before {
+    content: "ㆍ";
+  }
+
+  & + & {
+    margin-top: 7px;
+  }
+}
+
+.email-confirm-resend {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  color: #5f6b7a;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+}
+
+.email-confirm-resend button {
+  border: 0;
+  background: transparent;
+  color: $email-confirm-primary;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: normal;
+  cursor: pointer;
+}

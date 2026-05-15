@@ -1,0 +1,60 @@
+$nav-primary: #0757c8;
+$nav-text: #1f2937;
+$nav-border: #e8eef7;
+$nav-surface: #ffffff;
+
+.app-nav {
+  width: var(--content-width);
+  min-width: var(--content-width);
+  margin: 0 auto;
+  height: 48px;
+  background: $nav-surface;
+
+  &-inner {
+    height: 48px;
+    padding-left: 43px;
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    border-bottom: 1px solid $nav-border;
+  }
+
+  &-home,
+  &-link,
+  &-donation {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  &-home {
+    width: 20px;
+    height: 20px;
+    justify-content: center;
+    color: $nav-primary;
+  }
+
+  &-home-icon {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  &-link {
+    color: $nav-text;
+  }
+
+  &-donation {
+    gap: 5px;
+    color: $nav-primary;
+  }
+
+  &-donation-icon {
+    width: 18px;
+    font-size: 17px;
+    line-height: 1;
+  }
+}

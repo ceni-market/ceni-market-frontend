@@ -1,0 +1,126 @@
+.site-header {
+  width: 100%;
+  min-width: 1240px;
+  height: 80px;
+  font-family: inherit;
+  background: #ffffff;
+  border-bottom: 1px solid #e8eef7;
+}
+.site-header-inner {
+  width: 1240px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 10px 35px 10px 36px;
+  display: grid;
+  grid-template-columns: 214px 500px 250px;
+  align-items: center;
+  column-gap: 102px;
+}
+.site-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 30px;
+  color: #0757c8;
+}
+.site-header-logo {
+  width: 141px;
+  height: 60px;
+  flex: 0 0 auto;
+}
+.site-header-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.site-header-title {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.site-header-search {
+  width: 500px;
+  height: 46px;
+  padding: 0 15px 0 21px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #d5deec;
+  border-radius: 30px;
+  background: #ffffff;
+}
+.site-header-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  color: #1f2937;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  background: transparent;
+}
+.site-header-search input::placeholder {
+  color: #9aa6b8;
+  opacity: 1;
+}
+.site-header-search button {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: transparent;
+  color: #0757c8;
+  cursor: pointer;
+  font-size: 25px;
+  line-height: 1;
+}
+.site-header-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 22px;
+}
+.site-header-button {
+  height: 42px;
+  padding: 0 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid #0757c8;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+}
+.site-header-button i {
+  font-size: 20px;
+  line-height: 1;
+}
+.site-header-button-ghost {
+  color: #0757c8;
+  background: #ffffff;
+}
+.site-header-button-primary {
+  color: #ffffff;
+  background: #0757c8;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/*# sourceMappingURL=AppHeader.css.map */

@@ -1,0 +1,154 @@
+$popular-bg: #f8fafc;
+$popular-surface: #ffffff;
+$popular-primary: #0757c8;
+$popular-title: #1f2937;
+$popular-text: #1f2937;
+$popular-subtle: #667085;
+$popular-time: #9aa3af;
+$popular-shadow: rgba(12, 12, 13, 0.05);
+$popular-like-bg: rgba(17, 24, 39, 0.3);
+
+.home-popular {
+  width: var(--content-width);
+  min-width: var(--content-width);
+  height: 260px;
+  margin: 0 auto;
+  background: $popular-bg;
+
+  &-inner {
+    height: 260px;
+  }
+
+  &-header {
+    height: 40px;
+    padding: 0 35px 0 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-title {
+    color: $popular-title;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  &-more {
+    color: $popular-subtle;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  &-list {
+    width: 1170px;
+    height: 190px;
+    margin: 9px auto 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-card {
+    width: 180px;
+    height: 190px;
+    display: block;
+    overflow: hidden;
+    flex: 0 0 auto;
+    background: $popular-surface;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px $popular-shadow;
+  }
+
+  &-thumb {
+    position: relative;
+    width: 180px;
+    height: 105.56px;
+    overflow: hidden;
+    border-radius: 10px 10px 0 0;
+  }
+
+  &-thumb-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &-like {
+    position: absolute;
+    top: 7px;
+    right: 6.33px;
+    width: 40.67px;
+    height: 20px;
+    padding: 3px 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    color: $popular-surface;
+    background: $popular-like-bg;
+    border-radius: 10px;
+  }
+
+  &-like-icon {
+    width: 11px;
+    height: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  &-like-count {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  &-info {
+    height: 84.44px;
+    padding: 7.39px 7px 10.56px 8px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &-card-title {
+    color: $popular-text;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  &-category {
+    margin-top: 9.5px;
+    color: $popular-subtle;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  &-meta {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: normal;
+  }
+
+  &-price {
+    color: $popular-primary;
+    white-space: nowrap;
+  }
+
+  &-time {
+    color: $popular-time;
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,910 @@
+$mypage-bg: #f8fafc;
+$mypage-surface: #ffffff;
+$mypage-primary: #0757c8;
+$mypage-primary-600: #0b63d8;
+$mypage-blue-soft: #eaf5ff;
+$mypage-text: #1f2937;
+$mypage-muted: #5f6b7a;
+$mypage-placeholder: #9aa6b8;
+$mypage-border: #e8eef7;
+$mypage-input-border: #d5deec;
+$mypage-success: #208a38;
+$mypage-success-bg: #e5ffda;
+$mypage-done-bg: #f0f1f3;
+
+.mypage {
+  min-width: var(--content-width);
+  background: #ffffff;
+}
+
+.mypage-body {
+  height: 710px;
+  padding: 45px 35px;
+  display: grid;
+  grid-template-columns: 180px 969px;
+  column-gap: 20px;
+  background: $mypage-bg;
+}
+
+.mypage-sidebar {
+  width: 180px;
+  height: 620px;
+  padding: 25px;
+  border-radius: 10px;
+  background: $mypage-surface;
+
+  h1 {
+    color: $mypage-text;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-sidebar-profile {
+  margin-top: 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: $mypage-muted;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+
+  i {
+    width: 14px;
+    font-size: 14px;
+    line-height: 1;
+  }
+}
+
+.mypage-sidebar-groups {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.mypage-sidebar-group {
+  h2 {
+    color: $mypage-text;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  ul {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: $mypage-muted;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  i {
+    width: 14px;
+    font-size: 13px;
+    line-height: 1;
+  }
+}
+
+.mypage-content {
+  width: 969px;
+  height: 620px;
+}
+
+.mypage-profile-panel {
+  width: 969px;
+  height: 190px;
+  padding: 20px 25px;
+  display: grid;
+  grid-template-columns: 308px 578px;
+  column-gap: 33px;
+  border-radius: 10px;
+  background: $mypage-surface;
+}
+
+.mypage-profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.mypage-profile-avatar {
+  width: 104px;
+  height: 104px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: $mypage-blue-soft;
+  color: $mypage-primary;
+
+  i {
+    font-size: 64px;
+    line-height: 1;
+  }
+}
+
+.mypage-profile-copy {
+  width: 184px;
+
+  .mypage-logout-button {
+    width: 92px;
+    height: 30px;
+    margin-top: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $mypage-input-border;
+    border-radius: 6px;
+    background: $mypage-surface;
+    color: $mypage-muted;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  strong {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: $mypage-text;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  p {
+    width: 184px;
+    margin-top: 10px;
+    color: $mypage-muted;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17px;
+  }
+}
+
+.mypage-summary-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mypage-summary-card {
+  width: 120px;
+  height: 150px;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid $mypage-blue-soft;
+  border-radius: 10px;
+  background: $mypage-surface;
+
+  i {
+    color: $mypage-primary;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  strong {
+    margin-top: 16px;
+    color: $mypage-text;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  span {
+    margin-top: 6px;
+    color: $mypage-text;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  em {
+    margin-top: auto;
+    color: $mypage-muted;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-lower {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 639px 310px;
+  column-gap: 20px;
+}
+
+.mypage-posts-panel {
+  width: 639px;
+  height: 412px;
+  position: relative;
+  border-radius: 10px;
+  background: $mypage-surface;
+}
+
+.mypage-posts-tabs {
+  height: 50px;
+  padding: 0 25px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  border-bottom: 1px solid $mypage-border;
+
+  button {
+    border: 0;
+    background: transparent;
+    color: $mypage-muted;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .is-active {
+    color: $mypage-primary;
+    font-weight: 700;
+  }
+}
+
+.mypage-posts-list {
+  height: 330px;
+}
+
+.mypage-post-item {
+  width: 639px;
+  height: 110px;
+  padding: 10px 24px;
+  display: grid;
+  grid-template-columns: 100px 1fr 100px;
+  column-gap: 20px;
+  border-bottom: 1px solid $mypage-border;
+}
+
+.mypage-post-item-wide {
+  width: 919px;
+  grid-template-columns: 100px 1fr 100px;
+  padding: 10px 25px;
+}
+
+.mypage-post-thumb {
+  width: 100px;
+  height: 90px;
+  overflow: hidden;
+  border-radius: 10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.mypage-post-info {
+  padding-top: 13px;
+}
+
+.mypage-post-title {
+  display: block;
+  color: $mypage-text;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mypage-post-meta {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: $mypage-muted;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mypage-post-price {
+  margin-top: 5px;
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  color: $mypage-primary;
+  line-height: normal;
+
+  strong {
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  span {
+    padding-top: 1px;
+    font-size: 10px;
+    font-weight: 700;
+  }
+}
+
+.mypage-post-side {
+  padding-top: 13px;
+}
+
+.mypage-post-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 17px;
+
+  button {
+    width: 12px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: $mypage-muted;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+  }
+}
+
+.mypage-post-status {
+  height: 22px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: $mypage-success-bg;
+  color: $mypage-success;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 12px;
+  white-space: nowrap;
+}
+
+.mypage-post-status-done {
+  background: $mypage-done-bg;
+  color: $mypage-muted;
+}
+
+.mypage-post-stats {
+  margin-top: 26px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  color: $mypage-muted;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  i {
+    font-size: 13px;
+    line-height: 1;
+  }
+  .bi-heart {
+    font-size: 11px;
+  }
+}
+
+.mypage-more-link {
+  position: absolute;
+  left: 299px;
+  bottom: 5px;
+  color: $mypage-primary-600;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.mypage-side-column {
+  width: 310px;
+  height: 412px;
+}
+
+.mypage-trades-panel {
+  width: 310px;
+  height: 310px;
+  padding: 20px 25px;
+  border-radius: 10px;
+  background: $mypage-surface;
+}
+
+.mypage-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  h2 {
+    color: $mypage-text;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  a {
+    color: $mypage-muted;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-trade-list {
+  margin-top: 13px;
+}
+
+.mypage-trade-item {
+  width: 260px;
+  height: 60px;
+  padding: 5px 0;
+  display: grid;
+  grid-template-columns: 55px 1fr;
+  column-gap: 22px;
+
+  img {
+    width: 55px;
+    height: 50px;
+    border-radius: 5px;
+    object-fit: cover;
+  }
+}
+
+.mypage-trade-info {
+  padding-top: 1px;
+}
+
+.mypage-trade-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  strong {
+    width: 84px;
+    color: $mypage-text;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 12px;
+    white-space: nowrap;
+  }
+
+  span {
+    color: $mypage-muted;
+    font-size: 8px;
+    font-weight: 500;
+    line-height: 10px;
+    white-space: nowrap;
+  }
+}
+
+.mypage-trade-status {
+  width: 40px;
+  height: 14px;
+  margin-top: 5px;
+  padding: 2px 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: $mypage-done-bg;
+  color: $mypage-muted;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 10px;
+  white-space: nowrap;
+}
+
+.mypage-trade-price {
+  margin-top: 3px;
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  color: $mypage-primary;
+
+  strong {
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 12px;
+  }
+
+  span {
+    padding-top: 2px;
+    font-size: 8px;
+    font-weight: 700;
+    line-height: 10px;
+  }
+}
+
+.mypage-donation-banner {
+  width: 310px;
+  height: 84px;
+  margin-top: 18px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 10px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.mypage-donation-copy {
+  position: absolute;
+  left: 18px;
+  top: 18px;
+
+  strong {
+    display: block;
+    color: $mypage-primary;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  a {
+    height: 22px;
+    margin-top: 10px;
+    padding: 5px 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $mypage-primary;
+    border-radius: 20px;
+    color: $mypage-primary;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 12px;
+    white-space: nowrap;
+  }
+}
+
+.mypage-detail-panel {
+  width: 969px;
+  height: 620px;
+  padding: 20px 25px;
+  border-radius: 10px;
+  background: $mypage-surface;
+}
+
+.mypage-detail-title {
+  height: 21px;
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+
+  h2 {
+    color: $mypage-text;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  span {
+    color: $mypage-muted;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 14px;
+    white-space: nowrap;
+  }
+
+  strong {
+    margin-left: 5px;
+    color: $mypage-primary-600;
+    font-weight: 500;
+  }
+}
+
+.mypage-detail-toolbar {
+  width: 919px;
+  height: 30px;
+  margin-top: 23px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid $mypage-border;
+}
+
+.mypage-detail-tabs {
+  display: flex;
+  align-items: flex-start;
+
+  button {
+    height: 30px;
+    padding: 8px 20px;
+    border: 0;
+    border-bottom: 1px solid transparent;
+    background: transparent;
+    color: $mypage-muted;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .is-active {
+    border-bottom-color: $mypage-primary;
+    color: $mypage-primary-600;
+    font-weight: 700;
+  }
+}
+
+.mypage-sort-button {
+  height: 24px;
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid $mypage-input-border;
+  border-radius: 6px;
+  background: $mypage-surface;
+  color: $mypage-muted;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 14px;
+  white-space: nowrap;
+  cursor: pointer;
+
+  i {
+    font-size: 8px;
+    line-height: 1;
+  }
+}
+
+.mypage-detail-list {
+  width: 919px;
+}
+
+.mypage-account-page {
+  .mypage-body {
+    height: auto;
+    min-height: 1017px;
+  }
+}
+
+.mypage-account {
+  width: 969px;
+  height: auto;
+
+  > h2 {
+    color: $mypage-text;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-account-card {
+  width: 919px;
+  margin-top: 23px;
+  padding: 25px;
+  border-radius: 10px;
+  background: $mypage-surface;
+
+  h3 {
+    color: $mypage-text;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-profile-photo-card {
+
+}
+
+.mypage-profile-photo {
+  width: 425px;
+  margin: 28px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &-preview {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: $mypage-blue-soft;
+    color: $mypage-primary;
+
+    i {
+      font-size: 80px;
+      line-height: 1;
+    }
+  }
+
+  button {
+    width: 240px;
+    height: 50px;
+    margin-top: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid $mypage-primary;
+    border-radius: 10px;
+    background: $mypage-surface;
+    color: $mypage-primary;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: normal;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  p {
+    margin-top: 9px;
+    color: $mypage-muted;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-password-card {
+}
+
+.mypage-password-form {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mypage-account-field {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  label {
+    display: grid;
+    grid-template-columns: 126px 425px;
+    align-items: center;
+    column-gap: 18px;
+  }
+
+  label > span {
+    color: $mypage-text;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+
+  em {
+    color: $mypage-placeholder;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+  }
+}
+
+.mypage-account-input {
+  width: 425px;
+  height: 50px;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 1px solid $mypage-input-border;
+  border-radius: 10px;
+  background: $mypage-surface;
+
+  i {
+    color: $mypage-placeholder;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: $mypage-text;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+
+    &::placeholder {
+      color: $mypage-placeholder;
+      opacity: 1;
+    }
+  }
+}
+
+.mypage-password-submit {
+  width: 425px;
+  height: 50px;
+  margin: 28px 0 0 222px;
+  border: 1px solid $mypage-input-border;
+  border-radius: 10px;
+  background: $mypage-primary;
+  color: $mypage-surface;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: normal;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mypage-withdraw-card {
+
+  p {
+    margin-top: 32px;
+    color: $mypage-muted;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 25px;
+
+    span {
+      display: block;
+      white-space: nowrap;
+    }
+  }
+
+  button {
+    width: 425px;
+    height: 50px;
+    margin: 42px 0 0 222px;
+    border: 1px solid #ef6b72;
+    border-radius: 10px;
+    background: $mypage-surface;
+    color: #ef6b72;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: normal;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+}
