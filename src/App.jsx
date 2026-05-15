@@ -14,8 +14,29 @@ import TradeHistory from "./pages/mypage/TradeHistory.jsx";
 import DonationPosts from "./pages/mypage/DonationPosts.jsx";
 import AccountSettings from "./pages/mypage/AccountSettings.jsx";
 import './App.css';
+import {useEffect} from "react";
 
 function App() {
+      useEffect(() => {
+            const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const hostname = window.location.hostname;
+
+            console.log("isMobile:", isMobile);
+            console.log("hostname:", hostname);
+
+            // 이미 모바일 도메인이면 리다이렉트 안함
+            if (hostname === "m.ceni-market.site") {
+                  return;
+            }
+
+            // 모바일 기기로 접속했을 때만 모바일 페이지 이동
+            if (
+                isMobile &&
+                hostname.endsWith("ceni-market.site")
+            ) {
+                  window.location.href = "https://m.ceni-market.site/mobile/login";
+            }
+      }, []);
   return (
       <Routes>
         <Route path="/" element={<Home/>} />
