@@ -3,8 +3,12 @@ import MypageLayout from './components/MypageLayout.jsx';
 import MypagePostRow from './components/MypagePostRow.jsx';
 import { mypagePosts, recentTrades } from './mypageData.js';
 import './Mypage.scss';
+import MyPosts from "./components/MyPosts.jsx";
+import {useQuery} from "@tanstack/react-query";
+import axios from "axios";
+import RecentTrades from "./components/RecentTrades.jsx";
 
-const AUTH_STORAGE_KEY = 'ceni-market-auth';
+const AUTH_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcDI4NzdAa25vdS5hYy5rciIsImlhdCI6MTc3OTI2NDEwMCwiZXhwIjoxNzc5NDQ0MTAwfQ.QuwJEfC10HZNVnMipjOM5DdBjyIjSA684WiNb57b4B8';
 const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
 
 const summaryItems = [
@@ -52,82 +56,44 @@ function ProfileSummary() {
   );
 }
 
-function MyPosts() {
-  return (
-    <section className="mypage-posts-panel">
-      <div className="mypage-posts-tabs">
-        <button className="is-active" type="button">내가 등록한 글</button>
-        <button type="button">나눔한 글</button>
-      </div>
-
-      <div className="mypage-posts-list">
-        {mypagePosts.map((post) => (
-          <MypagePostRow item={post} key={post.id} />
-        ))}
-      </div>
-
-      <NavLink className="mypage-more-link" to="/mypage/posts">
-        더보기 &gt;
-      </NavLink>
-    </section>
-  );
-}
-
-function TradeItem({ trade }) {
-  return (
-    <article className="mypage-trade-item">
-      <img src={trade.image} alt="" />
-      <div className="mypage-trade-info">
-        <div className="mypage-trade-head">
-          <strong>{trade.title}</strong>
-          <span>{trade.date}</span>
-        </div>
-        <span className="mypage-trade-status">판매 완료</span>
-        <div className="mypage-trade-price">
-          <strong>{trade.price}</strong>
-          <span>원</span>
-        </div>
-      </div>
-    </article>
-  );
-}
-
-function RecentTrades() {
-  return (
-    <aside className="mypage-side-column">
-      <section className="mypage-trades-panel">
-        <div className="mypage-panel-head">
-          <h2>최근 거래 내역</h2>
-          <NavLink to="/mypage/trades">더보기 &gt;</NavLink>
-        </div>
-
-        <div className="mypage-trade-list">
-          {recentTrades.map((trade) => (
-            <TradeItem trade={trade} key={trade.id} />
-          ))}
-        </div>
-      </section>
-
-      <section className="mypage-donation-banner">
-        <img src="/assets/images/mypage-banner.png" alt="" />
-        <div className="mypage-donation-copy">
-          <strong>나눔으로 더 가까워지는 우리</strong>
-          <NavLink to="/mypage/donations">나눔 게시판 바로가기 &gt;</NavLink>
-        </div>
-      </section>
-    </aside>
-  );
-}
-
 function Mypage() {
+    const {data : myPosts, isLoading : myPostsLoading, error : myPostsError} = useQuery({
+        queryKey: ['myPosts'],
+        queryFn: async () => {
+            const response = await axios.get(`https://api.ceni-market.site/api/mypage/listings?size=3`, {
+                headers: {
+                    Authorization: `Bearer ${AUTH_STORAGE_KEY}`,
+                }
+            })
+            // console.log(response.data.data.content)
+            return response.data.data.content;
+        }
+    })
+
+    const {data : recentTrades, isLoading : recentTradesLoading, error : recentTradesError} = useQuery({
+        queryKey: ['recentTrades'],
+        queryFn: async () => {
+            const response = await axios.get(`https://api.ceni-market.site/api/mypage/transactions?size=3`, {
+                headers: {
+                    Authorization: `Bearer ${AUTH_STORAGE_KEY}`,
+                }
+            })
+            console.log(response.data.data.content)
+            return response.data.data.content;
+        }
+    })
+
+    if (recentTradesError) {
+        console.log(recentTradesError);
+    }
+
   return (
     <MypageLayout>
       <div className="mypage-content">
         <ProfileSummary />
-
         <div className="mypage-lower">
-          <MyPosts />
-          <RecentTrades />
+          <MyPosts myPosts = {myPosts} />
+          <RecentTrades recentTrades = {recentTrades} />
         </div>
       </div>
     </MypageLayout>

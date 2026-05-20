@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
 
 function MypagePostRow({ item, wide = false }) {
+  console.log(item.updatedAt.split('T', 1))
   return (
     <article className={`mypage-post-item${wide ? ' mypage-post-item-wide' : ''}`}>
       <NavLink className="mypage-post-thumb" to={`/products/${item.id}`}>
-        <img src={item.image} alt="" />
+        <img src={item.image.imageUrl} alt="" />
       </NavLink>
 
       <div className="mypage-post-info">
@@ -12,8 +13,8 @@ function MypagePostRow({ item, wide = false }) {
           {item.title}
         </NavLink>
         <div className="mypage-post-meta">
-          <span>{item.category}</span>
-          <span>{item.date}</span>
+          <span>{item.category.name}</span>
+          <span>{item.updatedAt.split('T', 1)}</span>
         </div>
         <div className="mypage-post-price">
           <strong>{item.price}</strong>
@@ -23,7 +24,7 @@ function MypagePostRow({ item, wide = false }) {
 
       <div className="mypage-post-side">
         <div className="mypage-post-actions">
-          <span className={`mypage-post-status${item.done ? ' mypage-post-status-done' : ''}`}>
+          <span className={`mypage-post-status${item.status !== 'ACTIVE' ? ' mypage-post-status-done' : ''}`}>
             {item.status}
           </span>
           <button type="button">
@@ -33,11 +34,11 @@ function MypagePostRow({ item, wide = false }) {
         <div className="mypage-post-stats">
           <span>
             <i className="bi bi-eye" />
-            {item.views}
+            {item.viewCount}
           </span>
           <span>
             <i className="bi bi-heart" />
-            {item.likes}
+            {item.likeCount}
           </span>
         </div>
       </div>
