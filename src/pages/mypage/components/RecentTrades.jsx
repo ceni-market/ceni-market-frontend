@@ -29,7 +29,7 @@ const RecentTrades = ({recentTrades = []}) => {
                 </div>
                 <div className="mypage-trade-list">
                     {recentTrades.map((trade) => (
-                        <TradeItem trade={trade} key={trade.id} />
+                        <TradeItem trade={trade} key={trade.transactionId} />
                     ))}
                 </div>
             </section>

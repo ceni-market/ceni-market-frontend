@@ -1,7 +1,6 @@
 import { NavLink } from 'react-router-dom';
 
 function MypagePostRow({ item, wide = false }) {
-  console.log(item.updatedAt.split('T', 1))
   return (
     <article className={`mypage-post-item${wide ? ' mypage-post-item-wide' : ''}`}>
       <NavLink className="mypage-post-thumb" to={`/products/${item.id}`}>

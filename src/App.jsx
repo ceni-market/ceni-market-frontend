@@ -21,9 +21,6 @@ function App() {
             const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             const hostname = window.location.hostname;
 
-            console.log("isMobile:", isMobile);
-            console.log("hostname:", hostname);
-
             // 이미 모바일 도메인이면 리다이렉트 안함
             if (hostname === "m.ceni-market.site") {
                   return;

@@ -2,7 +2,6 @@ import {NavLink} from "react-router-dom";
 import MypagePostRow from "./MypagePostRow.jsx";
 
 const MyPosts = ({myPosts = []}) => {
-    console.log(myPosts);
     return (
         <section className="mypage-posts-panel">
             <div className="mypage-posts-tabs">
