@@ -10,6 +10,8 @@ const TEMP_USER = {
 export const useAuthStore = create((set) => ({
     user: TEMP_USER,
 
+    token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcDI4NzdAa25vdS5hYy5rciIsImlhdCI6MTc3OTQxMzAwMiwiZXhwIjoxNzc5NTkzMDAyfQ.f0v_gvdRcQscXhxhhkgroOaxq1-VvWv4YwmcLLEXHDs",
+
     login: (userData) =>
         set({
             user: userData,

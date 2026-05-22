@@ -18,7 +18,7 @@ $mypage-done-bg: #f0f1f3;
 }
 
 .mypage-body {
-  height: 710px;
+  //height: 710px;
   padding: 45px 35px;
   display: grid;
   grid-template-columns: 180px 969px;
@@ -32,6 +32,9 @@ $mypage-done-bg: #f0f1f3;
   padding: 25px;
   border-radius: 10px;
   background: $mypage-surface;
+  position: sticky;
+  top: 20px;
+  //align-self: flex-start;
 
   h1 {
     color: $mypage-text;
@@ -599,7 +602,7 @@ $mypage-done-bg: #f0f1f3;
 
 .mypage-detail-panel {
   width: 969px;
-  height: 620px;
+  //height: 620px;
   padding: 20px 25px;
   border-radius: 10px;
   background: $mypage-surface;

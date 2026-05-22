@@ -1,7 +1,7 @@
 import MypageLayout from './MypageLayout.jsx';
 import MypagePostRow from './MypagePostRow.jsx';
 
-function MypageListPage({ title, total, tabs, items }) {
+function MypageListPage({ title, total, tabs, items = []}) {
   return (
     <MypageLayout>
       <section className="mypage-detail-panel">

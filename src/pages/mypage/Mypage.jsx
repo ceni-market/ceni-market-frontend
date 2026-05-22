@@ -6,17 +6,17 @@ import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import RecentTrades from "./components/RecentTrades.jsx";
 import ProfileSummary from "./components/ProfileSummary.jsx";
-
-const AUTH_STORAGE_KEY = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcDI4NzdAa25vdS5hYy5rciIsImlhdCI6MTc3OTIzNjczMCwiZXhwIjoxNzc5NDE2NzMwfQ.LTu_XjmHXnxfji4nnhTp02t-B7Gg6SF9vit8dFyvfCw';
-const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
+import {useAuthStore} from "../../store/authStore.js";
 
 function Mypage() {
+    const { token } = useAuthStore();
+
     const {data : myPosts, isLoading : myPostsLoading, error : myPostsError} = useQuery({
         queryKey: ['myPosts'],
         queryFn: async () => {
             const response = await axios.get(`https://api.ceni-market.site/api/mypage/listings?size=3`, {
                 headers: {
-                    Authorization: `Bearer ${AUTH_STORAGE_KEY}`,
+                    Authorization: `Bearer ${token}`,
                 }
             })
             return response.data.data.content;
@@ -28,7 +28,7 @@ function Mypage() {
         queryFn: async () => {
             const response = await axios.get(`https://api.ceni-market.site/api/mypage/transactions?size=3`, {
                 headers: {
-                    Authorization: `Bearer ${AUTH_STORAGE_KEY}`,
+                    Authorization: `Bearer ${token}`,
                 }
             })
             return response.data.data.content;
@@ -40,7 +40,7 @@ function Mypage() {
         queryFn: async () => {
             const response = await axios.get(`https://api.ceni-market.site/api/mypage/summary`, {
                 headers: {
-                    Authorization: `Bearer ${AUTH_STORAGE_KEY}`,
+                    Authorization: `Bearer ${token}`,
                 }
             })
             return response.data.data;
@@ -52,7 +52,7 @@ function Mypage() {
         queryFn: async () => {
             const response = await axios.get(`https://api.ceni-market.site/api/mypage/me`, {
                 headers: {
-                    Authorization: `Bearer ${AUTH_STORAGE_KEY}`,
+                    Authorization: `Bearer ${token}`,
                 }
             })
             return response.data.data;
