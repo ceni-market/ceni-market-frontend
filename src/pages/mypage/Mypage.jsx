@@ -19,7 +19,7 @@ function Mypage() {
                     Authorization: `Bearer ${token}`,
                 }
             })
-            return response.data.data.content;
+            return response.data.data;
         }
     })
 
@@ -64,7 +64,7 @@ function Mypage() {
       <div className="mypage-content">
         <ProfileSummary profileSummary={profileSummary} profilePanel={profilePanel}/>
         <div className="mypage-lower">
-          <MyPosts myPosts = {myPosts} />
+          <MyPosts myPosts = {myPosts?.content} />
           <RecentTrades recentTrades = {recentTrades} />
         </div>
       </div>
