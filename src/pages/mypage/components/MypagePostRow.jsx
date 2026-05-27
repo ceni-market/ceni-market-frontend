@@ -12,8 +12,8 @@ function MypagePostRow({ item, wide = false }) {
           {item.title}
         </NavLink>
         <div className="mypage-post-meta">
-          <span>{item.category.name}</span>
-          <span>{item.updatedAt.split('T', 1)}</span>
+          <span>{item.category?.name||item.categoryName}</span>
+          <span>{item.updatedAt?.split('T', 1)||item.completedAt.split('T', 1)}</span>
         </div>
         <div className="mypage-post-price">
           <strong>{item.price}</strong>
@@ -24,7 +24,7 @@ function MypagePostRow({ item, wide = false }) {
       <div className="mypage-post-side">
         <div className="mypage-post-actions">
           <span className={`mypage-post-status${item.status !== 'ACTIVE' ? ' mypage-post-status-done' : ''}`}>
-            {item.status}
+            {item.status||item.transactionType}
           </span>
         </div>
         <div className="mypage-post-stats">
