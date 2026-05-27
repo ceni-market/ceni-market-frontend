@@ -15,6 +15,7 @@ import DonationPosts from "./pages/mypage/DonationPosts.jsx";
 import AccountSettings from "./pages/mypage/AccountSettings.jsx";
 import './App.css';
 import {useEffect} from "react";
+import LikePosts from "./pages/mypage/LikePosts.jsx";
 
 function App() {
       useEffect(() => {
@@ -54,6 +55,7 @@ function App() {
         <Route path="/mypage/trades" element={<TradeHistory />} />
         <Route path="/mypage/donations" element={<DonationPosts />} />
         <Route path="/mypage/account" element={<AccountSettings />} />
+        <Route path="/mypage/likes" element={<LikePosts />} />
       </Routes>
   )
 }
