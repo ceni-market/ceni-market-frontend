@@ -7,7 +7,6 @@ import {useState} from "react";
 import {apiClient} from "../../api/apiClient.js";
 
 function MyRegisteredPosts() {
-    const {token} = useAuthStore();
     const [likes, setLikes] = useState([]);
     const [total, setTotal] = useState(0);
     const [selectedTab, setSelectedTab] = useState('전체');
