@@ -12,17 +12,60 @@ export const apiClient = axios.create({
 });
 
 // 2. 요청 인터셉터 설정
+// 💡 헬퍼 함수: 현재 로그인 유저가 '로그인 상태 유지(localStorage)'를 사용 중인지 감지
+const checkKeepLogin = () => !!localStorage.getItem("accessToken");
+
+// 2. [🔒 1차 방어벽] 요청(Request) 인터셉터 설정
 apiClient.interceptors.request.use(
-    (config) => {
-        // ✨ [핵심] 1단계에서 만든 Zustand 스토어에서 실시간 accessToken 꺼내기
-        const { accessToken } = useAuthStore.getState();
+    async (config) => {
+        // Zustand 스토어에서 실시간 상태 꺼내기
+        const { accessToken, refreshToken, expireTime, login, logout } = useAuthStore.getState();
 
         // 토큰이 존재한다면, 백엔드가 요구하는 규격(Bearer )에 맞춰 헤더에 주입
         if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
+            // 💡 디펜시브 체크: 만료 1분 전(60000ms)이거나 이미 만료되었다면 즉시 재발급 절차 가동
+            const isExpired = expireTime && Date.now() >= (expireTime - 60000);
+
+            if (isExpired && refreshToken) {
+                try {
+                    // 무한 루프 방지를 위해 순수 axios 객체로 로컬 백엔드 서버를 찌름
+                    const response = await axios.post("http://localhost:8088/api/auth/refresh", {
+                        refreshToken: refreshToken
+                    });
+
+                    // 백엔드가 새로 던져준 토큰 세트 수령 (LoginResponseDTO 규격)
+                    const {
+                        accessToken: newAccessToken,
+                        refreshToken: newRefreshToken,
+                        accessTokenExpiresIn
+                    } = response.data;
+
+                    const isKeepLogin = checkKeepLogin();
+
+                    // Zustand 창고 동기화 및 갱신 (만료 시간 연장 완료)
+                    login({
+                        accessToken: newAccessToken,
+                        refreshToken: newRefreshToken,
+                        accessTokenExpiresIn,
+                        keepLogin: isKeepLogin
+                    });
+
+                    // 이번에 날리려던 원래 요청의 헤더에 신상 토큰을 장착
+                    config.headers['Authorization'] = `Bearer ${newAccessToken}`;
+                } catch (error) {
+                    // 리프레시 토큰마저 만료되었거나 DB 검증에 실패한 경우 완전히 튕겨내기
+                    console.error('세션이 만료되어 자동 로그아웃됩니다.', error);
+                    logout();
+                    window.location.href = '/login?error=session_expired';
+                    return Promise.reject(error);
+                }
+            } else {
+                // 토큰 수명이 넉넉하게 남아있다면 기존 토큰을 헤더에 삽입
+                config.headers['Authorization'] = `Bearer ${accessToken}`;
+            }
         }
 
-        // 세팅이 완료된 원래 요청(config)을 그대로 출항시킵니다.
+        // 세팅이 완료된 원래 요청(config)을 그대로 출항
         return config;
     },
     (error) => {
@@ -31,9 +74,9 @@ apiClient.interceptors.request.use(
     }
 );
 
-// 응답(Response) 인터셉터: 백엔드의 응답 결과를 가로채서 401 처리 수행
+// 3. [🔒 2차 방어벽] 응답(Response) 인터셉터: 백엔드의 응답 결과를 가로채서 401 처리 수행
 apiClient.interceptors.response.use(
-    // 200번대 정상 응답은 아무 작업 없이 그대로 통과시킵니다.
+    // 200번대 정상 응답은 아무 작업 없이 그대로 통과
     (response) => response,
 
     // 에러 발생 시 (400, 401, 500 등) 이쪽 핸들러로 진입합니다.
@@ -52,20 +95,29 @@ apiClient.interceptors.response.use(
                     throw new Error("리프레시 토큰이 스토어에 존재하지 않습니다.");
                 }
 
-                // 🔄 백엔드에 토큰 재발급(Refresh) API 호출
-                // 순환 호출 에러를 방지하기 위해 apiClient 대신 순수 전역 axios를 사용합니다.
-                const refreshResponse = await axios.post("https://api.ceni-market.site/api/auth/refresh", {
+                // 🔄 📌 💡 서버 주소 동기화: 테스트 환경을 위해 로컬 호스트 주소로 통일합니다.
+                const refreshResponse = await axios.post("http://localhost:8088/api/auth/refresh", {
                     refreshToken: refreshToken
                 });
 
-                // 백엔드가 { accessToken: '...', refreshToken: '...', user: {...} } 형태로 준다고 가정
-                const newAuthData = refreshResponse.data;
+                const {
+                    accessToken: newAccessToken,
+                    refreshToken: newRefreshToken,
+                    accessTokenExpiresIn
+                } = refreshResponse.data;
 
-                // 1단계 스토어의 login 액션을 재사용하여 새 토큰들을 스토어와 LocalStorage에 갱신
-                login(newAuthData);
+                const isKeepLogin = checkKeepLogin();
+
+                // 📌 💡 규격 매칭 수정: 1단계 스토어의 객체 형태 규격에 맞추어 로그인 데이터를 주입합니다.
+                login({
+                    accessToken: newAccessToken,
+                    refreshToken: newRefreshToken,
+                    accessTokenExpiresIn,
+                    keepLogin: isKeepLogin
+                });
 
                 // 실패했던 원래 요청의 헤더를 새 발급받은 핫한 accessToken으로 교체
-                originalRequest.headers.Authorization = `Bearer ${newAuthData.accessToken}`;
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
                 // ✨ 원래 실패했던 API 요청을 새 토큰과 함께 그대로 백엔드에 재전송!
                 return apiClient(originalRequest);
@@ -78,7 +130,7 @@ apiClient.interceptors.response.use(
                 useAuthStore.getState().logout();
 
                 // 로그인 페이지로 강제 리다이렉트 (컴포넌트 밖이므로 window.location 사용)
-                window.location.href = "/login";
+                window.location.href = "/login?error=session_expired";
 
                 return Promise.reject(refreshError);
             }
