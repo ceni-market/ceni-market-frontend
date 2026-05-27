@@ -4,20 +4,17 @@ import {useAuthStore} from "../../store/authStore.js";
 import {useQuery} from "@tanstack/react-query";
 import axios from "axios";
 import {useState} from "react";
+import {apiClient} from "../../api/apiClient.js";
 
 function MyRegisteredPosts() {
-    const {token} = useAuthStore();
     const [likes, setLikes] = useState([]);
     const [total, setTotal] = useState(0);
     const [selectedTab, setSelectedTab] = useState('전체');
 
     const fetchMyPosts = async (type, status) => {
-        const response = await axios.get(
-            `https://api.ceni-market.site/api/mypage/likes`,
+        const response = await apiClient.get(
+            `/mypage/likes`,
             {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
                 params: {
                     size: 10,
                     ...(type && {type}),

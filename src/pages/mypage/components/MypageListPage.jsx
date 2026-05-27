@@ -29,7 +29,7 @@ function MypageListPage({ title, total, tabs, items = [], handleTabChange, selec
 
         <div className="mypage-detail-list">
           {items.map((item) => (
-            <MypagePostRow item={item} wide key={item.id} />
+            <MypagePostRow item={item} wide key={item.id||item.transactionId} />
           ))}
         </div>
       </section>
