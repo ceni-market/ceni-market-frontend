@@ -38,7 +38,6 @@ function MyRegisteredPosts() {
     const handleTabChange = (tab) => {
 
         setSelectedTab(tab);
-
         let type = null;
         let status = null;
 
