@@ -1,23 +1,21 @@
 import MypageLayout from './MypageLayout.jsx';
 import MypagePostRow from './MypagePostRow.jsx';
 
-function MypageListPage({ title, total, tabs, items = []}) {
+function MypageListPage({ title, total, tabs, items = [], handleTabChange, selectedTab}) {
   return (
     <MypageLayout>
       <section className="mypage-detail-panel">
         <div className="mypage-detail-title">
           <h2>{title}</h2>
-          {total && (
             <span>
               전체 <strong>{total}</strong>
             </span>
-          )}
         </div>
 
         <div className="mypage-detail-toolbar">
           <div className="mypage-detail-tabs">
             {tabs.map((tab, index) => (
-              <button className={index === 0 ? 'is-active' : ''} type="button" key={tab}>
+              <button className={tab === selectedTab ? 'is-active' : ''} type="button" key={tab} onClick={() => handleTabChange(tab)}>
                 {tab}
               </button>
             ))}

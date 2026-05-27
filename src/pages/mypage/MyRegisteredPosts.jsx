@@ -6,35 +6,62 @@ import axios from "axios";
 import {useState} from "react";
 
 function MyRegisteredPosts() {
-  const { token } = useAuthStore();
-  const [myPosts, setMyPosts] = useState([]);
+    const {token} = useAuthStore();
+    const [myPosts, setMyPosts] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [selectedTab, setSelectedTab] = useState('전체');
 
-  const {data, isLoading : myPostsLoading, error : myPostsError} = useQuery({
-    queryKey: ['myPosts'],
-    queryFn: async () => {
-      const response = await axios.get(`https://api.ceni-market.site/api/mypage/listings?size=10`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      })
-      setMyPosts(response.data.data.content);
-      return response.data.data;
+    const fetchMyPosts = async (type, status) => {
+        const response = await axios.get(
+            `https://api.ceni-market.site/api/mypage/listings`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+                params: {
+                    size: 10,
+                    ...(type && {type}),
+                    ...(status && {status}),
+                }
+            }
+        )
+        setTotal(response.data.data.totalElements)
+        setMyPosts(response.data.data.content);
+        return response.data.data
     }
-  })
 
-  const handleTabChange = (status, type) => {
-    if(status === "ACTIVE")
+    const {data, isLoading: myPostsLoading, error: myPostsError} = useQuery({
+        queryKey: ['myPosts'],
+        queryFn: () => fetchMyPosts(null, null),
+    })
 
+    const handleTabChange = (tab) => {
 
-  }
-  return (
-    <MypageListPage
-      title="내가 등록한 글"
-      total={data?.totalElements ?? 0}
-      tabs={['전체', '판매 중', '나눔 중','판매 완료', '나눔 완료']}
-      items={myPosts}
-    />
-  );
+        setSelectedTab(tab);
+
+        let type = null;
+        let status = null;
+
+        switch (tab) {
+            case '전체': break;
+            case '판매 중': type = 'SALE'; status = 'ACTIVE'; break;
+            case '나눔 중': type = 'GIVEAWAY'; status = 'ACTIVE'; break;
+            case '판매 완료': type = 'SALE'; status = 'SOLD'; break;
+            case '나눔 완료': type = 'GIVEAWAY'; status = 'GIVEN'; break;
+        }
+        fetchMyPosts(type, status)
+    }
+
+    return (
+        <MypageListPage
+            title="내가 등록한 글"
+            total={total}
+            tabs={['전체', '판매 중', '나눔 중', '판매 완료', '나눔 완료']}
+            items={myPosts}
+            handleTabChange={handleTabChange}
+            selectedTab={selectedTab}
+        />
+    );
 }
 
 export default MyRegisteredPosts;
