@@ -7,18 +7,13 @@ import axios from "axios";
 import RecentTrades from "./components/RecentTrades.jsx";
 import ProfileSummary from "./components/ProfileSummary.jsx";
 import {useAuthStore} from "../../store/authStore.js";
+import {apiClient} from "../../api/apiClient.js";
 
 function Mypage() {
-    const { token } = useAuthStore();
-
-    const {data : myPosts, isLoading : myPostsLoading, error : myPostsError} = useQuery({
+    const { data: myPosts, isLoading: myPostsLoading, error: myPostsError } = useQuery({
         queryKey: ['myPosts'],
         queryFn: async () => {
-            const response = await axios.get(`https://api.ceni-market.site/api/mypage/listings?size=3`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            })
+            const response = await apiClient.get(`/mypage/listings?size=3`)
             return response.data.data;
         }
     })
@@ -26,11 +21,7 @@ function Mypage() {
     const {data : recentTrades, isLoading : recentTradesLoading, error : recentTradesError} = useQuery({
         queryKey: ['recentTrades'],
         queryFn: async () => {
-            const response = await axios.get(`https://api.ceni-market.site/api/mypage/transactions?size=3`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            })
+            const response = await apiClient.get(`/mypage/transactions?size=3`)
             return response.data.data.content;
         }
     })
@@ -38,11 +29,7 @@ function Mypage() {
     const {data : profileSummary} = useQuery({
         queryKey: ['profileSummary'],
         queryFn: async () => {
-            const response = await axios.get(`https://api.ceni-market.site/api/mypage/summary`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            })
+            const response = await apiClient.get(`/mypage/summary`)
             return response.data.data;
         }
     })
@@ -50,11 +37,7 @@ function Mypage() {
     const {data : profilePanel} = useQuery({
         queryKey: ['profilePanel'],
         queryFn: async () => {
-            const response = await axios.get(`https://api.ceni-market.site/api/mypage/me`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                }
-            })
+            const response = await apiClient.get(`/mypage/me`)
             return response.data.data;
         }
     })

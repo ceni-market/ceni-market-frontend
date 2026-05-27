@@ -1,7 +1,13 @@
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../../store/authStore.js";
 
 const ProfileSummary = ({profileSummary = [], profilePanel = []}) => {
+    const logout = useAuthStore((state) => state.logout);
+    const navigate = useNavigate();
+
     const handleLogout = () => {
+        logout();
+        navigate("/login");
     };
 
     const summaryItems = [

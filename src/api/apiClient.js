@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/authStore";
 
 // 1. 우리 프로젝트 전용 공통 Axios 인스턴스 생성
 export const apiClient = axios.create({
-    baseURL: "http://localhost:8088/api", // 백엔드 포트와 API 루트 경로
+    baseURL: "https://api.ceni-market.site/api", // 백엔드 포트와 API 루트 경로
     timeout: 5000,                       // 5초 동안 응답이 없으면 타임아웃
     headers: {
         "Content-Type": "application/json",
@@ -53,7 +53,7 @@ apiClient.interceptors.response.use(
 
                 // 🔄 백엔드에 토큰 재발급(Refresh) API 호출
                 // 순환 호출 에러를 방지하기 위해 apiClient 대신 순수 전역 axios를 사용합니다.
-                const refreshResponse = await axios.post("http://localhost:8088/api/auth/refresh", {
+                const refreshResponse = await axios.post("https://api.ceni-market.site/api/auth/refresh", {
                     refreshToken: refreshToken
                 });
 
