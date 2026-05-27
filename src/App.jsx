@@ -1,4 +1,4 @@
-import {Route, Routes} from "react-router-dom";
+import {Route, Routes, Navigate} from "react-router-dom";
 import Home from "./pages/home/Home.jsx"
 import Login from "./pages/auth/login/Login.jsx";
 import Signup from "./pages/auth/signup/Signup.jsx";
@@ -16,6 +16,21 @@ import AccountSettings from "./pages/mypage/AccountSettings.jsx";
 import './App.css';
 import {useEffect} from "react";
 import LikePosts from "./pages/mypage/LikePosts.jsx";
+
+import { useAuthStore } from "./store/authStore";
+import OAuth2RedirectHandler from "./pages/auth/login/OAuth2RedirectHandler.jsx";
+
+// 🔒 [디펜시브 코드] 1차 주소창 방어벽
+// 로그인 상태가 아니면 비정상적인 주소창 타이핑 접근을 차단하고 로그인 페이지로 강제 리다이렉트합니다.
+const ProtectedRoute = ({ children }) => {
+      const accessToken = useAuthStore((state) => state.accessToken);
+
+      if (!accessToken) {
+            alert("로그인이 필요한 서비스입니다.");
+            return <Navigate to="/login" replace />;
+      }
+      return children;
+};
 
 function App() {
       useEffect(() => {
@@ -37,25 +52,31 @@ function App() {
       }, []);
   return (
       <Routes>
-        <Route path="/" element={<Home/>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/email-confirm" element={<EmailConfirm redirectTo="/signup/complete" />} />
-        <Route path="/signup/complete" element={<SignupComplete />} />
-        <Route path="/find-password" element={<FindPassword />} />
-        <Route path="/find-password/verify" element={<EmailConfirm />} />
-        <Route path="/find-password/reset" element={<FindPassword step={3} />} />
-        <Route path="/find-password/complete" element={<FindPassword step={4} />} />
-        <Route path="/products" element={<ProductList />} />
-        <Route path="/posts/new" element={<ProductWrite />} />
-        <Route path="/products/:productId" element={<ProductDetail />} />
-        <Route path="/posts/:postId" element={<ProductDetail />} />
-        <Route path="/mypage" element={<Mypage />} />
-        <Route path="/mypage/posts" element={<MyRegisteredPosts />} />
-        <Route path="/mypage/trades" element={<TradeHistory />} />
-        <Route path="/mypage/donations" element={<DonationPosts />} />
-        <Route path="/mypage/account" element={<AccountSettings />} />
-        <Route path="/mypage/likes" element={<LikePosts />} />
+            {/* 🌍 1. 누구나 자유롭게 접근 가능한 공용(Public) 라우트 */}
+            <Route path="/" element={<Home/>} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/email-confirm" element={<EmailConfirm redirectTo="/signup/complete" />} />
+            <Route path="/signup/complete" element={<SignupComplete />} />
+            <Route path="/find-password" element={<FindPassword />} />
+            <Route path="/find-password/verify" element={<EmailConfirm />} />
+            <Route path="/find-password/reset" element={<FindPassword step={3} />} />
+            <Route path="/find-password/complete" element={<FindPassword step={4} />} />
+            <Route path="/products" element={<ProductList />} />
+            <Route path="/products/:productId" element={<ProductDetail />} />
+            <Route path="/posts/:postId" element={<ProductDetail />} />
+
+            {/* 🔄 2. [추가] 소셜 로그인 성공 시 백엔드가 프론트로 튕겨주는 전용 길목 */}
+            <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+
+            {/* 🔒 3. [보안망 가동] 토큰이 없으면 주소창 타이핑 시 차단되는 회원 전용 라우트 */}
+            <Route path="/posts/new" element={<ProtectedRoute><ProductWrite /></ProtectedRoute>} />
+            <Route path="/mypage" element={<ProtectedRoute><Mypage /></ProtectedRoute>} />
+            <Route path="/mypage/posts" element={<ProtectedRoute><MyRegisteredPosts /></ProtectedRoute>} />
+            <Route path="/mypage/trades" element={<ProtectedRoute><TradeHistory /></ProtectedRoute>} />
+            <Route path="/mypage/donations" element={<ProtectedRoute><DonationPosts /></ProtectedRoute>} />
+            <Route path="/mypage/account" element={<ProtectedRoute><AccountSettings /></ProtectedRoute>} />
+            <Route path="/mypage/likes" element={<ProtectedRoute><LikePosts /></ProtectedRoute>} />
       </Routes>
   )
 }

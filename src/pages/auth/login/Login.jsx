@@ -7,9 +7,6 @@ import './Login.scss';
 import React, { useState } from 'react';
 import { useLoginMutation } from '../../../hooks/useLoginMutation';
 
-const AUTH_STORAGE_KEY = 'ceni-market-auth';
-const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
-
 function LoginField({ id, type, placeholder, icon, value, onChange }) {
   return (
     <label className="login-field" htmlFor={id}>
@@ -40,11 +37,16 @@ function Login() {
   // 💡 4. 실제 백엔드 로그인 요청으로 핸들러 교체
   const handleSubmit = (event) => {
     event.preventDefault();
-
     if (!email.trim() || !password.trim()) return;
 
     // React Query mutation 실행 (이메일, 비밀번호 전달)
     mutate({ email, password, keepLogin });
+  };
+
+  // 소셜 로그인 연동 핸들러 함수
+  // 스프링 시큐리티 OAuth2 기본 규격 엔드포인트로 브라우저 주소를 강제 이동시킵니다.
+  const handleSocialLogin = (provider) => {
+    window.location.href = `http://localhost:8088/oauth2/authorization/${provider}`;
   };
 
   return (
@@ -121,12 +123,22 @@ function Login() {
               <span />
             </div>
 
+            {/* 소셜 로그인 버튼에 onClick 핸들러 바인딩 */}
             <div className="login-socials">
-              <button className="login-social login-social-google" type="button">
+              <button
+                  className="login-social login-social-google"
+                  type="button"
+                  onClick={() => handleSocialLogin('google')}
+              >
                 <img src="/assets/images/google-icon.png" alt="" />
                 <span>Google 계정으로 로그인</span>
               </button>
-              <button className="login-social login-social-kakao" type="button">
+
+              <button
+                  className="login-social login-social-kakao"
+                  type="button"
+                  onClick={() => handleSocialLogin('kakao')}
+              >
                 <img src="/assets/images/kakao-icon.png" alt="" />
                 <span>Kakao 계정으로 로그인</span>
               </button>
