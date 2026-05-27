@@ -17,9 +17,9 @@ export const useLoginMutation = () => {
 
 
         // 2. 로그인 성공 시 실행될 콜백 함수
-        onSuccess: (data) => {
+        onSuccess: (data,{ keepLogin }) => {
             // 스토어와 로컬스토리지에 토큰 및 유저 정보 자동 저장
-            login(data);
+            login({ ...data, keepLogin });
 
             try {
                 // ② [디펜시브/추천] 로그인 직후, 방금 받은 토큰을 들고 내 프로필 정보 채우기

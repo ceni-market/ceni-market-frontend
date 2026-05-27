@@ -31,6 +31,8 @@ function Login() {
   // 입력값을 기억할 State
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // 로그인 상태 유지 체크 여부를 관리할 State 추가 (기본값: false)
+  const [keepLogin, setKeepLogin] = useState(false);
 
   // 리액트 쿼리 커스텀 훅 연결
   const { mutate, isPending, error } = useLoginMutation();
@@ -42,7 +44,7 @@ function Login() {
     if (!email.trim() || !password.trim()) return;
 
     // React Query mutation 실행 (이메일, 비밀번호 전달)
-    mutate({ email, password });
+    mutate({ email, password, keepLogin });
   };
 
   return (
@@ -80,7 +82,14 @@ function Login() {
 
               <div className="login-options">
                 <label className="login-keep" htmlFor="login-keep">
-                  <input id="login-keep" name="keepLogin" type="checkbox" />
+                  {/* 💡 3. 체크박스 엘리먼트에 리액트 State 바인딩 */}
+                  <input
+                      id="login-keep"
+                      name="keepLogin"
+                      type="checkbox"
+                      checked={keepLogin}
+                      onChange={(e) => setKeepLogin(e.target.checked)}
+                  />
                   <span>로그인 상태 유지</span>
                 </label>
                 <Link className="login-find" to="/find-password">
