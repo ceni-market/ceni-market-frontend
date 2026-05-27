@@ -4,24 +4,45 @@ import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
 import AppNav from '../../../widgets/app-nav/AppNav.jsx';
 import { Link } from 'react-router-dom';
 import './Login.scss';
+import React, { useState } from 'react';
+import { useLoginMutation } from '../../../hooks/useLoginMutation';
 
 const AUTH_STORAGE_KEY = 'ceni-market-auth';
 const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
 
-function LoginField({ id, type, placeholder, icon }) {
+function LoginField({ id, type, placeholder, icon, value, onChange }) {
   return (
     <label className="login-field" htmlFor={id}>
       <i className={`login-field-icon bi ${icon}`} aria-hidden="true" />
-      <input id={id} name={id} type={type} placeholder={placeholder} />
+      <input
+          id={id}
+          name={id}
+          type={type}
+          placeholder={placeholder}
+          value={value}       // 값 바인딩
+          onChange={onChange} // 입력 전파
+          required
+      />
     </label>
   );
 }
 
 function Login() {
+  // 입력값을 기억할 State
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // 리액트 쿼리 커스텀 훅 연결
+  const { mutate, isPending, error } = useLoginMutation();
+
+  // 💡 4. 실제 백엔드 로그인 요청으로 핸들러 교체
   const handleSubmit = (event) => {
     event.preventDefault();
-    window.localStorage.setItem(AUTH_STORAGE_KEY, 'logged-in');
-    window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+
+    if (!email.trim() || !password.trim()) return;
+
+    // React Query mutation 실행 (이메일, 비밀번호 전달)
+    mutate({ email, password });
   };
 
   return (
@@ -38,17 +59,23 @@ function Login() {
             </header>
 
             <form className="login-form" onSubmit={handleSubmit}>
+              {/* 💡 1. 이메일 필드에 상호작용 프롭스(value, onChange) 주입 */}
               <LoginField
-                id="login-email"
-                type="email"
-                placeholder="이메일을 입력하세요"
-                icon="bi-person"
+                  id="login-email"
+                  type="email"
+                  placeholder="이메일을 입력하세요"
+                  icon="bi-person"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
               />
+              {/* 💡 2. 비밀번호 필드에 상호작용 프롭스 주입 */}
               <LoginField
-                id="login-password"
-                type="password"
-                placeholder="비밀번호를 입력하세요"
-                icon="bi-lock"
+                  id="login-password"
+                  type="password"
+                  placeholder="비밀번호를 입력하세요"
+                  icon="bi-lock"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
               />
 
               <div className="login-options">
@@ -61,8 +88,21 @@ function Login() {
                 </Link>
               </div>
 
-              <button className="login-submit" type="submit">
-                로그인
+              {/* 🚨 3. 에러 발생 시 UI 경고 박스 노출 (스프링 부트 한글 에러 메시지와 연동) */}
+              {error && (
+                  <div className="login-error-alert" style={{ color: '#dc3545', fontSize: '14px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <i className="bi bi-exclamation-circle-fill"></i>
+                    <span>{error.response?.data?.message || '이메일 또는 비밀번호가 일치하지 않습니다.'}</span>
+                  </div>
+              )}
+
+              {/* 💡 4. 버튼 비활성화 처리 및 텍스트 변경으로 분기 처리 (연타 방지) */}
+              <button
+                  className="login-submit"
+                  type="submit"
+                  disabled={isPending}
+              >
+                {isPending ? '로그인 중...' : '로그인'}
               </button>
             </form>
 

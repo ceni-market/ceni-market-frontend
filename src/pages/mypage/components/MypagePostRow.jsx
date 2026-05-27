@@ -4,7 +4,7 @@ function MypagePostRow({ item, wide = false }) {
   return (
     <article className={`mypage-post-item${wide ? ' mypage-post-item-wide' : ''}`}>
       <NavLink className="mypage-post-thumb" to={`/products/${item.id}`}>
-        <img src={item.image.imageUrl} alt="" />
+        <img src={item.image?.imageUrl|| "/assets/images/product-default-img.png"} alt="" />
       </NavLink>
 
       <div className="mypage-post-info">
@@ -26,9 +26,6 @@ function MypagePostRow({ item, wide = false }) {
           <span className={`mypage-post-status${item.status !== 'ACTIVE' ? ' mypage-post-status-done' : ''}`}>
             {item.status}
           </span>
-          <button type="button">
-            <i className="bi bi-three-dots-vertical" />
-          </button>
         </div>
         <div className="mypage-post-stats">
           <span>
