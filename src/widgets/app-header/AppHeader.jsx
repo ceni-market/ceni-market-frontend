@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import ChatModal from '../chat-modal/ChatModal.jsx';
 import './AppHeader.scss';
+import {useAuthStore} from "../../store/authStore.js";
 
 const AUTH_STORAGE_KEY = 'ceni-market-auth';
 const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
@@ -42,31 +43,13 @@ const LOGGED_IN_ACTIONS = [
   },
 ];
 
-function getLoginState() {
-  if (typeof window === 'undefined') {
-    return false;
-  }
-
-  return window.localStorage.getItem(AUTH_STORAGE_KEY) === 'logged-in';
-}
-
 function AppHeader() {
-  const [isLoggedIn, setIsLoggedIn] = useState(getLoginState);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
 
-  useEffect(() => {
-    const syncLoginState = () => {
-      setIsLoggedIn(getLoginState());
-    };
-
-    window.addEventListener('storage', syncLoginState);
-    window.addEventListener(AUTH_CHANGE_EVENT, syncLoginState);
-
-    return () => {
-      window.removeEventListener('storage', syncLoginState);
-      window.removeEventListener(AUTH_CHANGE_EVENT, syncLoginState);
-    };
-  }, []);
+  const isLoggedIn = !!accessToken;
 
   const actions = isLoggedIn ? LOGGED_IN_ACTIONS : NAV_ACTIONS;
 

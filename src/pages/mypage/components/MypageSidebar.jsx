@@ -5,7 +5,7 @@ const menuGroups = [
     title: '거래 관리',
     items: [
       { label: '내가 등록한 글', href: '/mypage/posts' },
-      { label: '관심 상품', href: '/mypage' },
+      { label: '관심 상품', href: '/mypage/likes' },
       { label: '거래 내역', href: '/mypage/trades' },
     ],
   },
