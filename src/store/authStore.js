@@ -10,7 +10,7 @@ const TEMP_USER = {
 export const useAuthStore = create((set) => ({
     user: TEMP_USER,
 
-    token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcDI4NzdAa25vdS5hYy5rciIsImlhdCI6MTc3OTc1Nzg2OCwiZXhwIjoxNzc5OTM3ODY4fQ.4YcLC-6blNWutVD2GdG41aIBXRKZ2KzXEcdwbY7NyIw",
+    token: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzcDI4NzdAa25vdS5hYy5rciIsImlhdCI6MTc3OTg0ODU3MCwiZXhwIjoxNzgwMDI4NTcwfQ.2Bht2f-WvQjH4WAMEDpjtTgn7oZgiD1PPyPkE01WMs0",
 
     login: (userData) =>
         set({
