@@ -2,16 +2,16 @@ import { NavLink } from 'react-router-dom';
 
 const menuGroups = [
   {
-    title: '거래 관리',
+    title: '상품 관리',
     items: [
       { label: '내가 등록한 글', href: '/mypage/posts' },
-      { label: '관심 상품', href: '/mypage/likes' },
-      { label: '거래 내역', href: '/mypage/trades' },
+      { label: '관심 상품', href: '/mypage/likes' }
     ],
   },
   {
-    title: '나눔 관리',
+    title: '내역 관리',
     items: [
+      { label: '거래 내역', href: '/mypage/trades' },
       { label: '나눔 내역', href: '/mypage/donations' },
     ],
   },

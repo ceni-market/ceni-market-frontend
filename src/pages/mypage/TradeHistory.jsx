@@ -6,33 +6,35 @@ import {apiClient} from "../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
 
 function TradeHistory() {
-    const [trads, setTrads] = useState([]);
     const [total, setTotal] = useState(0);
     const [selectedTab, setSelectedTab] = useState('전체');
+    const [page, setPage] = useState(0);
+    const size = 10;
 
-    const fetchMyPosts = async (role) => {
+    const fetchMyTrades = async (role) => {
         const response = await apiClient.get(
             `/mypage/transactions`,
             {
                 params: {
-                    size: 10,
+                    page,
+                    size,
                     ...(role && {role}),
                 }
             }
         )
         setTotal(response.data.data.totalElements)
-        setTrads(response.data.data.content);
         return response.data.data
     }
 
     const {data, isLoading: myPostsLoading, error: myPostsError} = useQuery({
-        queryKey: ['trades'],
-        queryFn: () => fetchMyPosts(null, null),
+        queryKey: ['trades', selectedTab, page, size],
+        queryFn: () => fetchMyTrades(null, null),
     })
 
     const handleTabChange = (tab) => {
 
         setSelectedTab(tab);
+        setPage(0);
 
         let role = null;
 
@@ -46,7 +48,7 @@ function TradeHistory() {
                 role = 'BUYER';
                 break;
         }
-        fetchMyPosts(role)
+        fetchMyTrades(role)
     }
 
     return (
@@ -54,9 +56,13 @@ function TradeHistory() {
             title="거래 내역"
             total={total}
             tabs={['전체', '판매 완료', '구매 완료']}
-            items={trads}
+            items={data?.content}
             handleTabChange={handleTabChange}
             selectedTab={selectedTab}
+            page={data?.number ?? page}
+            totalPages={data?.totalPages ?? 0}
+            last={data?.last ?? true}
+            onPageChange={setPage}
         />
     );
 }
