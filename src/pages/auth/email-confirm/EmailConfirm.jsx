@@ -4,7 +4,7 @@ import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
 import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
 import AppNav from '../../../widgets/app-nav/AppNav.jsx';
-import { useSignUpMutation } from '../../../hooks/useSignupMutation.js';
+import { useSignUpMutation } from '../../../hooks/useSignUpMutation.js';
 import axios from 'axios'; // 🎯 주기적으로 백엔드를 찌르기 위한 axios 사용
 import './EmailConfirm.scss';
 

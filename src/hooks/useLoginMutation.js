@@ -20,7 +20,6 @@ export const useLoginMutation = () => {
         onSuccess: (data,{ keepLogin }) => {
             // 스토어와 로컬스토리지에 토큰 및 유저 정보 자동 저장
             login({ ...data, keepLogin });
-
             try {
                 // ② [디펜시브/추천] 로그인 직후, 방금 받은 토큰을 들고 내 프로필 정보 채우기
                 // (백엔드에 회원 정보 조회 엔드포인트가 구현되어 있다면 주석을 해제하세요)
