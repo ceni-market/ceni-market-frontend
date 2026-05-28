@@ -7,34 +7,36 @@ import {useState} from "react";
 import {apiClient} from "../../api/apiClient.js";
 
 function MyRegisteredPosts() {
-    const [likes, setLikes] = useState([]);
     const [total, setTotal] = useState(0);
     const [selectedTab, setSelectedTab] = useState('전체');
+    const [page, setPage] = useState(0);
+    const size = 10;
 
-    const fetchMyPosts = async (type, status) => {
+    const fetchMyLikes = async (type, status) => {
         const response = await apiClient.get(
             `/mypage/likes`,
             {
                 params: {
-                    size: 10,
+                    page,
+                    size,
                     ...(type && {type}),
                     ...(status && {status}),
                 }
             }
         )
         setTotal(response.data.data.totalElements)
-        setLikes(response.data.data.content);
         return response.data.data
     }
 
-    const {data, isLoading: myPostsLoading, error: myPostsError} = useQuery({
-        queryKey: ['likes'],
-        queryFn: () => fetchMyPosts(null, null),
+    const {data, isLoading, error} = useQuery({
+        queryKey: ['likes', selectedTab, page, size],
+        queryFn: () => fetchMyLikes(null, null),
     })
 
     const handleTabChange = (tab) => {
 
         setSelectedTab(tab);
+        setPage(0);
 
         let type = null;
         let status = null;
@@ -44,7 +46,7 @@ function MyRegisteredPosts() {
             case '판매 중': type = 'SALE'; status = 'ACTIVE'; break;
             case '나눔 중': type = 'GIVEAWAY'; status = 'ACTIVE'; break;
         }
-        fetchMyPosts(type, status)
+        fetchMyLikes(type, status)
     }
 
     return (
@@ -52,9 +54,13 @@ function MyRegisteredPosts() {
             title="관심 상품"
             total={total}
             tabs={['전체', '판매 중', '나눔 중']}
-            items={likes}
+            items={data?.content}
             handleTabChange={handleTabChange}
             selectedTab={selectedTab}
+            page={data?.number ?? page}
+            totalPages={data?.totalPages ?? 0}
+            last={data?.last ?? true}
+            onPageChange={setPage}
         />
     );
 }

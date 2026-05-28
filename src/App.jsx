@@ -52,19 +52,22 @@ function App() {
       }, []);
   return (
       <Routes>
-            {/* 🌍 1. 누구나 자유롭게 접근 가능한 공용(Public) 라우트 */}
-            <Route path="/" element={<Home/>} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/email-confirm" element={<EmailConfirm redirectTo="/signup/complete" />} />
-            <Route path="/signup/complete" element={<SignupComplete />} />
-            <Route path="/find-password" element={<FindPassword />} />
-            <Route path="/find-password/verify" element={<EmailConfirm />} />
-            <Route path="/find-password/reset" element={<FindPassword step={3} />} />
-            <Route path="/find-password/complete" element={<FindPassword step={4} />} />
-            <Route path="/products" element={<ProductList />} />
-            <Route path="/products/:productId" element={<ProductDetail />} />
-            <Route path="/posts/:postId" element={<ProductDetail />} />
+          {/* 🌍 1. 누구나 자유롭게 접근 가능한 공용(Public) 라우트 */}
+          <Route path="/" element={<Home/>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* 🎯 이메일 인증 대기 및 가입 완료 라우터 주소 동기화 */}
+          <Route path="/email-confirm" element={<EmailConfirm />} />
+          <Route path="/signup-complete" element={<SignupComplete />} />
+
+          <Route path="/find-password" element={<FindPassword />} />
+          <Route path="/find-password/verify" element={<EmailConfirm />} />
+          <Route path="/find-password/reset" element={<FindPassword step={3} />} />
+          <Route path="/find-password/complete" element={<FindPassword step={4} />} />
+          <Route path="/products" element={<ProductList />} />
+          <Route path="/products/:productId" element={<ProductDetail />} />
+          <Route path="/posts/:postId" element={<ProductDetail />} />
 
             {/* 🔄 2. [추가] 소셜 로그인 성공 시 백엔드가 프론트로 튕겨주는 전용 길목 */}
             <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
