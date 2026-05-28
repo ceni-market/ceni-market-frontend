@@ -12,15 +12,7 @@ const menuGroups = [
   {
     title: '나눔 관리',
     items: [
-      { label: '나눔한 글', href: '/mypage/donations' },
-      { label: '나눔 받은 글', href: '/mypage' },
-    ],
-  },
-  {
-    title: '활동 관리',
-    items: [
-      { label: '찜한 게시글', href: '/mypage' },
-      { label: '최근 본 상품', href: '/mypage' },
+      { label: '나눔 내역', href: '/mypage/donations' },
     ],
   },
   {
