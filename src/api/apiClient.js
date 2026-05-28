@@ -29,7 +29,7 @@ apiClient.interceptors.request.use(
             if (isExpired && refreshToken) {
                 try {
                     // 무한 루프 방지를 위해 순수 axios 객체로 로컬 백엔드 서버를 찌름
-                    const response = await axios.post("http://localhost:8088/api/auth/refresh", {
+                    const response = await axios.post("https://api.ceni-market.site/api/auth/refresh", {
                         refreshToken: refreshToken
                     });
 
@@ -96,7 +96,7 @@ apiClient.interceptors.response.use(
                 }
 
                 // 🔄 📌 💡 서버 주소 동기화: 테스트 환경을 위해 로컬 호스트 주소로 통일합니다.
-                const refreshResponse = await axios.post("http://localhost:8088/api/auth/refresh", {
+                const refreshResponse = await axios.post("https://api.ceni-market.site/api/auth/refresh", {
                     refreshToken: refreshToken
                 });
 
