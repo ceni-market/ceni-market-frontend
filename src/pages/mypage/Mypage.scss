@@ -700,6 +700,54 @@ $mypage-done-bg: #f0f1f3;
   width: 919px;
 }
 
+.mypage-pagination {
+  width: 919px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  button {
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $mypage-input-border;
+    border-radius: 6px;
+    background: $mypage-surface;
+    color: $mypage-muted;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover:not(:disabled):not(.is-active) {
+      border-color: $mypage-primary-600;
+      color: $mypage-primary-600;
+    }
+
+    &:disabled {
+      color: $mypage-placeholder;
+      background: #f8fafc;
+      cursor: default;
+    }
+
+    &.is-active {
+      border-color: $mypage-primary;
+      background: $mypage-primary;
+      color: $mypage-surface;
+    }
+  }
+
+  .mypage-pagination-arrow {
+    min-width: 54px;
+  }
+}
+
 .mypage-account-page {
   .mypage-body {
     height: auto;

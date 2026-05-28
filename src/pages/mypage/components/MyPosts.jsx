@@ -6,7 +6,6 @@ const MyPosts = ({myPosts = []}) => {
         <section className="mypage-posts-panel">
             <div className="mypage-posts-tabs">
                 <button className="is-active" type="button">내가 등록한 글</button>
-                <button type="button">나눔한 글</button>
             </div>
 
             <div className="mypage-posts-list">

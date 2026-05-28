@@ -11,10 +11,10 @@ const ProfileSummary = ({profileSummary = [], profilePanel = []}) => {
     };
 
     const summaryItems = [
-        { id: 1, label: '판매한 상품', count: profileSummary.soldListingCount, href: '/mypage/trades' },
-        { id: 2, label: '관심 상품', count: profileSummary.likedListingCount, href: '/mypage' },
-        { id: 3, label: '나눔한 글', count: profileSummary.donatedListingCount, href: '/mypage/donations' },
-        { id: 4, label: '나눔 받은 글', count: profileSummary.receivedDonationCount, href: '/mypage' },
+        { id: 1, label: '등록한 글', count: profileSummary.myListingCount, href: '/mypage/posts' },
+        { id: 2, label: '관심 상품', count: profileSummary.likedListingCount, href: '/mypage/likes' },
+        { id: 3, label: '거래 내역', count: profileSummary.tradeHistoryCount, href: '/mypage/trades' },
+        { id: 4, label: '나눔 내역', count: profileSummary.donationHistoryCount, href: '/mypage/donations' },
     ];
 
     return (
