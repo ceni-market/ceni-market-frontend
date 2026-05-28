@@ -39,7 +39,7 @@ function EmailConfirm() {
         // 📡 백엔드에 현재 이메일의 verified_at이 채워졌는지 상태 체크 요청
         const baseUrl = window.location.hostname === 'localhost'
             ? 'http://localhost:8088'
-            : 'https://api.cenimarket.com';
+            : 'https://api.ceni-market.site';
 
         const response = await axios.get(`${baseUrl}/api/auth/signup/status?email=${email}`);
 
