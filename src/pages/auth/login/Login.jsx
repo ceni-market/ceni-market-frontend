@@ -46,7 +46,7 @@ function Login() {
   // 소셜 로그인 연동 핸들러 함수
   // 스프링 시큐리티 OAuth2 기본 규격 엔드포인트로 브라우저 주소를 강제 이동시킵니다.
   const handleSocialLogin = (provider) => {
-    window.location.href = `http://localhost:8088/oauth2/authorization/${provider}`;
+    window.location.href = `https://api.ceni-market.site/oauth2/authorization/${provider}`;
   };
 
   return (
