@@ -10,7 +10,7 @@ function ChatMessageList({ messages, currentUserEmail, isVisible }) {
 
                 return (<div className={`chat-message chat-message-${message.senderEmail === currentUserEmail ? "me" : "partner" }`} key={message.createdAt}>
 
-                    {message.type === 'IMAGE' ? (
+                    {message.contentType === 'IMAGE' ? (
                         <img className="chat-message-image" src={message.message} alt="전송된 이미지" />
                     ) : (
                         <p className="chat-message-bubble">{message.message}</p>
