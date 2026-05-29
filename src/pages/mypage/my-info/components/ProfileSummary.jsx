@@ -1,5 +1,5 @@
 import {NavLink, useNavigate} from "react-router-dom";
-import {useAuthStore} from "../../../store/authStore.js";
+import {useAuthStore} from "../../../../store/authStore.js";
 
 const ProfileSummary = ({profileSummary = [], profilePanel = []}) => {
     const logout = useAuthStore((state) => state.logout);
@@ -11,10 +11,10 @@ const ProfileSummary = ({profileSummary = [], profilePanel = []}) => {
     };
 
     const summaryItems = [
-        { id: 1, label: '등록한 글', count: profileSummary.myListingCount, href: '/mypage/posts' },
-        { id: 2, label: '관심 상품', count: profileSummary.likedListingCount, href: '/mypage/likes' },
-        { id: 3, label: '거래 내역', count: profileSummary.tradeHistoryCount, href: '/mypage/trades' },
-        { id: 4, label: '나눔 내역', count: profileSummary.donationHistoryCount, href: '/mypage/donations' },
+        { id: 1, label: '등록한 글', count: profileSummary.myListingCount, href: '/mypage/posts', icon: 'bi-box' },
+        { id: 2, label: '관심 상품', count: profileSummary.likedListingCount, href: '/mypage/likes', icon: 'bi-tag'},
+        { id: 3, label: '거래 내역', count: profileSummary.tradeHistoryCount, href: '/mypage/trades', icon: 'bi-clock' },
+        { id: 4, label: '나눔 내역', count: profileSummary.donationHistoryCount, href: '/mypage/donations', icon: 'bi-heart-fill' },
     ];
 
     return (
@@ -42,7 +42,7 @@ const ProfileSummary = ({profileSummary = [], profilePanel = []}) => {
             <div className="mypage-summary-list">
                 {summaryItems.map((item) => (
                     <NavLink className="mypage-summary-card" to={item.href} key={item.id}>
-                        <i className="bi bi-tag" />
+                        <i className={`bi ${item.icon}`} />
                         <strong>{item.count}</strong>
                         <span>{item.label}</span>
                         <em>자세히 보기 &gt;</em>

@@ -1,13 +1,10 @@
-import MypageLayout from './components/MypageLayout.jsx';
-import { mypagePosts, recentTrades } from './mypageData.js';
-import './Mypage.scss';
+import MypageLayout from '../components/MypageLayout.jsx';
+import '../Mypage.scss';
 import MyPosts from "./components/MyPosts.jsx";
 import {useQuery} from "@tanstack/react-query";
-import axios from "axios";
 import RecentTrades from "./components/RecentTrades.jsx";
 import ProfileSummary from "./components/ProfileSummary.jsx";
-import {useAuthStore} from "../../store/authStore.js";
-import {apiClient} from "../../api/apiClient.js";
+import {apiClient} from "../../../api/apiClient.js";
 
 function Mypage() {
     const { data: myPosts, isLoading: myPostsLoading, error: myPostsError } = useQuery({

@@ -1,7 +1,7 @@
-import MypageListPage from './components/MypageListPage.jsx';
-import './Mypage.scss';
+import MypageListPage from '../components/MypageListPage.jsx';
+import '../Mypage.scss';
 import {useState} from "react";
-import {apiClient} from "../../api/apiClient.js";
+import {apiClient} from "../../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
 
 function DonationPosts() {

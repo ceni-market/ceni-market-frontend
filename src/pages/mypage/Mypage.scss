@@ -203,6 +203,10 @@ $mypage-done-bg: #f0f1f3;
   border-radius: 10px;
   background: $mypage-surface;
 
+  .bi-heart-fill {
+    color: red;
+  }
+
   i {
     color: $mypage-primary;
     font-size: 20px;

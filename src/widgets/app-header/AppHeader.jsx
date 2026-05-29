@@ -102,7 +102,7 @@ function AppHeader() {
         </div>
       </header>
 
-      {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}
+      {isChatOpen && <ChatModal isChatOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />}
     </>
   );
 }
