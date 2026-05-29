@@ -104,6 +104,7 @@ $chat-muted: #5f6b7a;
   border-right: 1px solid $chat-border;
   background: $chat-surface;
   padding: 0 1px;
+  overflow-y: auto;
 }
 
 .chat-modal-partner {
@@ -138,12 +139,14 @@ $chat-muted: #5f6b7a;
   }
 }
 
+//.chat-modal-partner:h
+
 .chat-modal-partner-copy {
   min-width: 0;
   margin-left: 11px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
 
   strong {
     font-size: 22px;
@@ -215,6 +218,7 @@ $chat-muted: #5f6b7a;
   padding-top: 10px;
   border-bottom: 1px solid $chat-border;
   background: $chat-surface;
+  overflow-y: auto;
 }
 
 .chat-modal-date {
@@ -229,7 +233,7 @@ $chat-muted: #5f6b7a;
 }
 
 .chat-message {
-  width: 100%;
+  width: 98%;
   display: flex;
   align-items: flex-end;
   gap: 15px;
