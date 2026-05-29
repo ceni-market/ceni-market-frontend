@@ -7,9 +7,7 @@ import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
 import AppNav from '../../../widgets/app-nav/AppNav.jsx';
 import './FindPassword.scss';
 
-const BASE_URL = window.location.hostname === 'localhost'
-    ? 'http://localhost:8088'
-    : 'https://api.ceni-market.site';
+const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
 
 const PASSWORD_FIND_STEPS = [
   { number: 1, label: '이메일 입력' },
@@ -84,7 +82,7 @@ function EmailStep({ onNext, setEmail }) {
         setLoading(true);
         try {
             // 백엔드 명세에 맞춰 이메일과 목적(PASSWORDRESET) 전송
-            await axios.post(`${BASE_URL}/api/auth/password-reset/email-request`, {
+            await axios.post(`${BACKEND_URL}/api/auth/password-reset/email-request`, {
                 email: inputEmail,
                 purpose: 'PASSWORDRESET'
             });
@@ -152,7 +150,7 @@ function VerifyStep({ email, onNext, setToken }) {
         // 1.5초 간격으로 백엔드 테이블 감시 시작
         const pollingInterval = setInterval(async () => {
             try {
-                const response = await axios.get(`${BASE_URL}/api/auth/password-reset/status?email=${email}`);
+                const response = await axios.get(`${BACKEND_URL}/api/auth/password-reset/status?email=${email}`);
 
                 // 💡 백엔드 응답: response.data.isVerified
                 if (response.data.isVerified === true) {
@@ -204,7 +202,7 @@ function ResetStep({ email, token, onNext }) {
 
         try {
             // 백엔드 명세에 맞춰 요청
-            await axios.post(`${BASE_URL}/api/auth/password-reset/complete`, {
+            await axios.post(`${BACKEND_URL}/api/auth/password-reset/complete`, {
                 email: email,
                 token: token,
                 newPassword: formData.newPassword,
