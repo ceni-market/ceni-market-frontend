@@ -113,8 +113,20 @@ $write-shadow: rgba(12, 12, 13, 0.05);
 
   select {
     width: 381px;
-    color: $write-placeholder;
+    color: $write-text;
     appearance: none;
+
+    &:invalid {
+      color: $write-placeholder;
+    }
+
+    option {
+      color: $write-text;
+    }
+
+    option[value=''] {
+      color: $write-placeholder;
+    }
   }
 
   textarea {
@@ -318,6 +330,17 @@ $write-shadow: rgba(12, 12, 13, 0.05);
 
     input {
       width: 350px;
+
+      &:disabled {
+        background: #f1f3f5;
+        border-color: #dee2e6;
+        color: #868e96;
+        cursor: not-allowed;
+      }
+
+      &:disabled::placeholder {
+        color: #adb5bd;
+      }
     }
   }
 
