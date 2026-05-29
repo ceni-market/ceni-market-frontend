@@ -1,5 +1,5 @@
 import {NavLink} from "react-router-dom";
-import MypagePostRow from "./MypagePostRow.jsx";
+import MypagePostRow from "../../components/MypagePostRow.jsx";
 
 const MyPosts = ({myPosts = []}) => {
     return (
