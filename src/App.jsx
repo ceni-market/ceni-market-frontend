@@ -19,6 +19,7 @@ import LikePosts from "./pages/mypage/my-likes/LikePosts.jsx";
 
 import { useAuthStore } from "./store/authStore";
 import OAuth2RedirectHandler from "./pages/auth/login/OAuth2RedirectHandler.jsx";
+import DonationList from "./pages/donation/DonationList.jsx";
 
 // 🔒 [디펜시브 코드] 1차 주소창 방어벽
 // 로그인 상태가 아니면 비정상적인 주소창 타이핑 접근을 차단하고 로그인 페이지로 강제 리다이렉트합니다.
@@ -66,6 +67,7 @@ function App() {
           <Route path="/find-password/reset" element={<FindPassword step={3} />} />
           <Route path="/find-password/complete" element={<FindPassword step={4} />} />
           <Route path="/products" element={<ProductList />} />
+          <Route path="/donations" element={<DonationList />} />
           <Route path="/products/:productId" element={<ProductDetail />} />
           <Route path="/posts/:postId" element={<ProductDetail />} />
 

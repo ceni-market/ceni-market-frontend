@@ -26,7 +26,7 @@ function AppNav() {
           </NavLink>
         ))}
 
-        <NavLink className="app-nav-donation" to="/">
+        <NavLink className="app-nav-donation" to="/donations">
           <i className="app-nav-donation-icon bi bi-heart-fill" aria-hidden="true" />
           <span className="app-nav-donation-label">나눔게시판</span>
         </NavLink>
