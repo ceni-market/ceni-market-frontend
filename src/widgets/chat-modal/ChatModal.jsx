@@ -9,9 +9,10 @@ import {apiClient} from "../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 
-function ChatModal({onClose, chatRoomData}) {
+function ChatModal({ isChatOpen, onClose, chatRoomData}) {
     //모달 컨트롤 함수들
-    const {position, isDragging, handleHeaderPointerDown} = useModal();
+    const {position, isDragging, handleHeaderPointerDown} = useModal(isChatOpen);
+
     //네비게이트
     const navigate = useNavigate();
 
@@ -65,6 +66,9 @@ function ChatModal({onClose, chatRoomData}) {
         navigate(`/products/${currentChatRoom.listingInfo?.id}`);
     }
 
+    //선택한 채팅방 색 강조
+    const [selectedChatRoomId, setSelectedChatRoomId] = useState(0);
+
 
     return (
         <div className="chat-modal-overlay" onMouseDown={onClose}>
@@ -83,13 +87,21 @@ function ChatModal({onClose, chatRoomData}) {
                 </header>
 
                 <div className="chat-modal-body">
-                    {/* 좌측 사이드바 */}
-                    <aside className="chat-modal-list">
-                        {myChatRoomDatas.map((myChatRoomData) => (
-                            <ChatRoomButton key={myChatRoomData.chatRoomId} myChatRoomData={myChatRoomData}
-                                            getCurrentChatRoom={getCurrentChatRoom}/>
-                        ))}
-                    </aside>
+                            {/* 좌측 사이드바 */}
+                            <aside className="chat-modal-list">
+                                        {myChatRoomDatas.map((myChatRoomData) => {
+                                            const isSelected = myChatRoomData.chatRoomId === selectedChatRoomId;
+                                            return (
+                                                <ChatRoomButton
+                                                                key={myChatRoomData.chatRoomId}
+                                                                myChatRoomData={myChatRoomData}
+                                                                getCurrentChatRoom={getCurrentChatRoom}
+                                                                isSelected={isSelected}
+                                                                setSelectedChatRoomId={setSelectedChatRoomId}
+                                                />
+                                            )
+                                        })}
+                            </aside>
                     {/* 우측 채팅방 메인 */}
                     { isVisible ?
                         (<section className="chat-modal-room">
@@ -116,7 +128,6 @@ function ChatModal({onClose, chatRoomData}) {
                         </section>) :
                         (<p className="plz-choose">채팅방을 선택하세요.</p>)
                     }
-
                 </div>
             </section>
         </div>
