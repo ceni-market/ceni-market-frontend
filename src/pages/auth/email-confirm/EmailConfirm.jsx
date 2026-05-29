@@ -37,11 +37,9 @@ function EmailConfirm() {
 
       try {
         // 📡 백엔드에 현재 이메일의 verified_at이 채워졌는지 상태 체크 요청
-        const baseUrl = window.location.hostname === 'localhost'
-            ? 'http://localhost:8088'
-            : 'https://api.ceni-market.site';
+        const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
 
-        const response = await axios.get(`${baseUrl}/api/auth/signup/status?email=${email}`);
+        const response = await axios.get(`${BACKEND_URL}/api/auth/signup/status?email=${email}`);
 
         // 백엔드에서 인증 완료 플래그(예: true)가 넘어오면 자동 회원가입 절차 가동
         if (response.data && response.data.isVerified === true) {

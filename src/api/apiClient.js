@@ -1,11 +1,7 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-const IS_LOCAL = window.location.hostname === 'localhost';
-
-const BACKEND_URL = IS_LOCAL
-    ? "http://localhost:8088"
-    : "https://api.ceni-market.site";
+const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
 
 // 1. 우리 프로젝트 전용 공통 Axios 인스턴스 생성
 export const apiClient = axios.create({
@@ -34,7 +30,7 @@ apiClient.interceptors.request.use(
             if (isExpired && refreshToken) {
                 try {
                     // 무한 루프 방지를 위해 순수 axios 객체로 로컬 백엔드 서버를 찌름
-                    const response = await axios.post("https://api.ceni-market.site/api/auth/refresh", {
+                    const response = await axios.post(`${BACKEND_URL}/api/auth/refresh`, {
                         refreshToken: refreshToken
                     });
 
@@ -101,7 +97,7 @@ apiClient.interceptors.response.use(
                 }
 
                 // 🔄 📌 💡 서버 주소 동기화: 테스트 환경을 위해 로컬 호스트 주소로 통일합니다.
-                const refreshResponse = await axios.post("https://api.ceni-market.site/api/auth/refresh", {
+                const refreshResponse = await axios.post(`${BACKEND_URL}/api/auth/refresh`, {
                     refreshToken: refreshToken
                 });
 
