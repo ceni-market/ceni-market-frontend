@@ -48,7 +48,7 @@ $list-shadow: rgba(12, 12, 13, 0.05);
 
 .product-list-sidebar {
   width: 180px;
-  height: 610px;
+  height: 620px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -71,6 +71,11 @@ $list-shadow: rgba(12, 12, 13, 0.05);
 .product-list-category-filter {
   height: 335px;
   padding: 25px;
+
+  .is-active {
+    color: #0b63d8;
+    font-weight: 700;
+  }
 
   ul {
     margin-top: 18px;
@@ -237,50 +242,10 @@ $list-shadow: rgba(12, 12, 13, 0.05);
 
 .product-list-grid {
   width: 919px;
-  margin-top: 20px;
+  margin-top: 28px;
   display: grid;
   grid-template-columns: repeat(5, 160px);
-  gap: 20px 30px;
-}
-
-.product-list-pagination {
-  margin-top: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  button {
-    width: 30px;
-    height: 30px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid $list-border;
-    border-radius: 6px;
-    background: $list-surface;
-    color: $list-muted;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
-    cursor: pointer;
-  }
-
-  button.active {
-    border-color: $list-primary;
-    background: $list-primary;
-    color: #ffffff;
-  }
-
-  button:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  i {
-    font-size: 11px;
-    line-height: 1;
-  }
+  gap: 28px 30px;
 }
 
 .product-list-card {

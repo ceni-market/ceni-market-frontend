@@ -25,7 +25,7 @@ function TradeHistory() {
         return response.data.data
     }
 
-    const {data, isLoading: myPostsLoading, error: myPostsError} = useQuery({
+    const {data, isLoading, error} = useQuery({
         queryKey: ['trades', selectedTab, page, size],
         queryFn: () => fetchMyTrades(null, null),
     })
