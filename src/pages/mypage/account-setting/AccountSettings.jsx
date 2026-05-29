@@ -114,6 +114,33 @@ function AccountSettings() {
   };
   const fileInputRef = useRef(null);
 
+  const handleWithdraw = async () => {
+    const password= prompt('회원 탈퇴를 위해 비밀번호를 입력해주세요.');
+    if(!password) return;
+
+    if(!confirm('절말 탈퇴하시겠습니까? 모든 데이터가 삭제됩니다.')) return;
+
+    try {
+      // 2. 서버에 탈퇴 요청
+      await axios.post(`${BACKEND_URL}/api/user/withdraw`,
+          { password }, // 비밀번호 DTO 전달
+          {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }
+      );
+
+      // 3. 로컬 저장소 토큰 삭제
+      localStorage.removeItem('accessToken');
+      sessionStorage.removeItem('accessToken');
+
+      alert('탈퇴가 완료되었습니다.');
+      window.location.href = '/'; // 메인 페이지로 이동
+    } catch (error) {
+      alert(error.response?.data?.message || '탈퇴 처리에 실패했습니다. 비밀번호를 확인해주세요.');
+    }
+  };
+
+
 
   return (
     <MypageLayout variant="account">
@@ -174,7 +201,7 @@ function AccountSettings() {
             <span>세니마켓 회원 탈퇴를 진행합니다.</span>
             <span>탈퇴 시 모든 데이터가 삭제되며, 복구할 수 없습니다.</span>
           </p>
-          <button type="button">회원 탈퇴하기</button>
+          <button type="button" onClick={handleWithdraw}>회원 탈퇴하기</button>
         </section>
       </section>
     </MypageLayout>
