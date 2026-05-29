@@ -154,6 +154,9 @@ function VerifyStep({ email, onNext, setToken }) {
 
                 // 💡 백엔드 응답: response.data.isVerified
                 if (response.data.isVerified === true) {
+                    if (response.data.token) {
+                        setToken(response.data.token); // 💡 서버에서 온 토큰을 저장
+                    }
                     clearInterval(pollingInterval);
                     onNext(); // 3단계(비밀번호 재설정 폼)로 이동
                 }
