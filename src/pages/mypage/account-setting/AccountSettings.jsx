@@ -1,6 +1,6 @@
 import MypageLayout from '../components/MypageLayout.jsx';
 import '../Mypage.scss';
-import React, { useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 
 function PasswordInput({ label, placeholder, helper, value, onChange, name }) {
@@ -65,6 +65,56 @@ function AccountSettings() {
     }
   };
 
+  const [profileImageUrl, setProfileImageUrl] = useState('');
+
+  useEffect(() => {
+    const fetchMyPageInfo = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/mypage/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        // 서버 응답 구조(ApiResponse)에 맞춰 data 접근
+        const userInfo = response.data.data;
+        setProfileImageUrl(userInfo.profileImageUrl);
+      } catch (error) {
+        console.error("사용자 정보를 불러오는데 실패했습니다.", error);
+      }
+    };
+
+    if (token) {
+      fetchMyPageInfo();
+    }
+  }, [BACKEND_URL, token]);
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fileFormData = new FormData();
+    fileFormData.append('file', file);
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/user/imageUpdate`, fileFormData, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      // 💡 서버에서 받은 응답(imageUrls)을 처리
+      const newImageUrl = response.data.imageUrls[0];
+      alert('프로필 사진이 변경되었습니다.');
+
+      // 상태 업데이트를 통해 화면 프리뷰 즉시 갱신
+      setProfileImageUrl(newImageUrl);
+    } catch (error) {
+      alert('이미지 업로드에 실패했습니다.');
+    }
+  };
+  const fileInputRef = useRef(null);
+
+
   return (
     <MypageLayout variant="account">
       <section className="mypage-account">
@@ -74,9 +124,20 @@ function AccountSettings() {
           <h3>프로필 사진 변경</h3>
           <div className="mypage-profile-photo">
             <div className="mypage-profile-photo-preview">
-              <i className="bi bi-person-fill" />
+              {profileImageUrl ? (
+                  <img src={profileImageUrl} alt="프로필" style={{width: '100%', height: '100%', borderRadius: '50%'}} />
+              ) : (
+                  <i className="bi bi-person-fill" />
+              )}
             </div>
-            <button type="button">
+            <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                accept="image/jpg, image/png"
+            />
+            <button type="button" onClick={() => fileInputRef.current.click()}>
               <i className="bi bi-image" />
               <span>프로필 사진 변경</span>
             </button>
