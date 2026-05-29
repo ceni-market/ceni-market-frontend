@@ -1,5 +1,5 @@
-import MypageLayout from './components/MypageLayout.jsx';
-import './Mypage.scss';
+import MypageLayout from '../components/MypageLayout.jsx';
+import '../Mypage.scss';
 
 function PasswordInput({ label, placeholder, helper }) {
   return (
