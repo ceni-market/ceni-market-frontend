@@ -120,7 +120,7 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                             {/* 분리된 메시지 리스트 */}
                             {/*<ChatMessageList messages={CHAT_MESSAGES} chatHistory={chatHistories}/>*/}
                             <ChatMessageList messages={chatHistories}
-                                             currentUserEmail={currentChatRoom.contactUserInfo?.email}
+                                             currentPartnerEmail={currentChatRoom.contactUserInfo?.email}
                                              isVisible={isVisible}/>
 
                             {/* 분리된 하단 입력창 */}
