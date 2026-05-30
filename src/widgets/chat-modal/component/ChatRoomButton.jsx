@@ -1,18 +1,14 @@
+import {useState} from "react";
 
 
-const ChatRoomButton = ({ myChatRoomData, getCurrentChatRoom, isSelected, setSelectedChatRoomId }) => {
+const ChatRoomButton = ({ myChatRoomData, getCurrentChatRoom, selectedChatRoomId }) => {
 
     return (
         <>
             <button className="chat-modal-partner" type="button"
-                    style={isSelected ? {backgroundColor:"#f0f5ff"} : {backgroundColor:"white"}}
+                    style={selectedChatRoomId === myChatRoomData.chatRoomId ? {backgroundColor:"#f0f5ff"} : {backgroundColor:"white"}}
                     onClick={() => {
                         getCurrentChatRoom(myChatRoomData);
-                        if(isSelected === false) {
-                            setSelectedChatRoomId(myChatRoomData?.chatRoomId);
-                        } else {
-                            setSelectedChatRoomId(0);
-                        }
                     }
             }>
                 <img src={myChatRoomData.contactUserInfo?.profileImageUrl} alt=""/>

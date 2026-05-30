@@ -215,7 +215,7 @@ $chat-muted: #5f6b7a;
 
 .chat-modal-messages {
   height: 480px;
-  padding-top: 10px;
+  padding: 7px 0;
   border-bottom: 1px solid $chat-border;
   background: $chat-surface;
   overflow-y: auto;
@@ -237,7 +237,8 @@ $chat-muted: #5f6b7a;
   display: flex;
   align-items: flex-end;
   gap: 15px;
-  padding: 0 5px;
+  padding: 0 2px;
+  margin-bottom: 3px;
 
   time {
     margin-bottom: 5px;
