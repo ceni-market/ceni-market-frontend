@@ -24,15 +24,16 @@ import DonationList from "./pages/donation/DonationList.jsx";
 
 // 🔒 [디펜시브 코드] 1차 주소창 방어벽
 // 로그인 상태가 아니면 비정상적인 주소창 타이핑 접근을 차단하고 로그인 페이지로 강제 리다이렉트합니다.
-const ProtectedRoute = ({ children }) => {
-      const accessToken = useAuthStore((state) => state.accessToken);
+const ProtectedRoute = ({children}) => {
+    const accessToken = useAuthStore((state) => state.accessToken);
 
-      if (!accessToken) {
-            //alert("로그인이 필요한 서비스입니다.");
-            return <Navigate to="/login" replace />;
-      }
-      return children;
+    if (!accessToken) {
+        //alert("로그인이 필요한 서비스입니다.");
+        return <Navigate to="/login" replace/>;
+    }
+    return children;
 };
+
 
 function App() {
     // const [isConnect, setIsConnect] = useState(true);
@@ -41,10 +42,10 @@ function App() {
         const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         const hostname = window.location.hostname;
 
-            // 이미 모바일 도메인이면 리다이렉트 안함
-            if (hostname === "m.ceni-market.site") {
-                  return;
-            }
+        // 이미 모바일 도메인이면 리다이렉트 안함
+        if (hostname === "m.ceni-market.site") {
+            return;
+        }
 
         // 모바일 기기로 접속했을 때만 모바일 페이지 이동
         if (
@@ -62,21 +63,21 @@ function App() {
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/signup" element={<Signup/>}/>
 
-          {/* 🎯 이메일 인증 대기 및 가입 완료 라우터 주소 동기화 */}
-          <Route path="/email-confirm" element={<EmailConfirm />} />
-          <Route path="/signup-complete" element={<SignupComplete />} />
+                {/* 🎯 이메일 인증 대기 및 가입 완료 라우터 주소 동기화 */}
+                <Route path="/email-confirm" element={<EmailConfirm/>}/>
+                <Route path="/signup-complete" element={<SignupComplete/>}/>
 
-          <Route path="/find-password" element={<FindPassword />} />
-          <Route path="/find-password/verify" element={<EmailConfirm />} />
-          <Route path="/find-password/reset" element={<FindPassword step={3} />} />
-          <Route path="/find-password/complete" element={<FindPassword step={4} />} />
-          <Route path="/products" element={<ProductList />} />
-          <Route path="/donations" element={<DonationList />} />
-          <Route path="/products/:productId" element={<ProductDetail />} />
-          <Route path="/posts/:postId" element={<ProductDetail />} />
+                <Route path="/find-password" element={<FindPassword/>}/>
+                <Route path="/find-password/verify" element={<EmailConfirm/>}/>
+                <Route path="/find-password/reset" element={<FindPassword step={3}/>}/>
+                <Route path="/find-password/complete" element={<FindPassword step={4}/>}/>
+                <Route path="/products" element={<ProductList/>}/>
+                <Route path="/donations" element={<DonationList/>}/>
+                <Route path="/products/:productId" element={<ProductDetail/>}/>
+                <Route path="/posts/:postId" element={<ProductDetail/>}/>
 
-            {/* 🔄 2. [추가] 소셜 로그인 성공 시 백엔드가 프론트로 튕겨주는 전용 길목 */}
-            <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler />} />
+                {/* 🔄 2. [추가] 소셜 로그인 성공 시 백엔드가 프론트로 튕겨주는 전용 길목 */}
+                <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler/>}/>
 
                 {/* 🔒 3. [보안망 가동] 토큰이 없으면 주소창 타이핑 시 차단되는 회원 전용 라우트 */}
                 <Route path="/posts/new" element={<ProtectedRoute><ProductWrite/></ProtectedRoute>}/>
