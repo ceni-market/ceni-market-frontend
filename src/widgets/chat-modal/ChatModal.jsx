@@ -53,9 +53,9 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
         queryFn: () => fetchMyChatRooms(),
     })
 
-    useEffect(() => {
-        fetchMyChatRooms();
-    }, []);
+    // useEffect(() => {
+    //     fetchMyChatRooms();
+    // }, []);
 
     //채팅 메시지 기록 데이터 요청
     const fetchMyChatHistories = async (chatRoomId) => {
@@ -117,11 +117,9 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                                     <strong>{currentChatRoom.contactUserInfo?.name}</strong>
                                     <span>{currentChatRoom.listingInfo?.title}</span>
                                 </div>
-                                {isVisible && (
-                                    <button className="chat-modal-detail" type="button" onClick={goToListingDetail}>
-                                        상품 상세보기 &gt;
-                                    </button>)
-                                }
+                                <button className="chat-modal-detail" type="button" onClick={goToListingDetail}>
+                                    상품 상세보기 &gt;
+                                </button>
                             </header>
 
                             {/* 분리된 메시지 리스트 */}
