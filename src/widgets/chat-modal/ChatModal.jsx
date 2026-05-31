@@ -23,18 +23,21 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
     const [chatHistories, setChatHistories] = useState([{}]);
     const [isVisible, setIsVisible] = useState(false);
     const getCurrentChatRoom = (myChatRoomData) => {
-        if(isVisible && currentChatRoom === myChatRoomData) {
+        if(currentChatRoom === myChatRoomData) {
+            setCurrentChatRoom(null);
             setIsVisible(false);
             setChatHistories([]);
+            setSelectedChatRoomId(0);
         } else {
             setCurrentChatRoom(myChatRoomData);
-            fetchMyChatHistories(myChatRoomData.chatRoomId)
-                .then(response => {
-                    setChatHistories(response.data.data);
-                });
+            fetchMyChatHistories(myChatRoomData.chatRoomId);
             setIsVisible(true);
+            setSelectedChatRoomId(myChatRoomData.chatRoomId);
         }
     }
+
+    const [lastMessageContent, setLastMessageContent] = useState("");
+
     //채팅방 데이터 요청
     const fetchMyChatRooms = async () => {
         const response = await apiClient.get(
@@ -50,15 +53,21 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
         queryFn: () => fetchMyChatRooms(),
     })
 
-    // const [chatMessages, setChatMessages] = useState([{}]);
+    useEffect(() => {
+        fetchMyChatRooms();
+    }, []);
 
     //채팅 메시지 기록 데이터 요청
     const fetchMyChatHistories = async (chatRoomId) => {
-        const response = await apiClient.get(
+        await apiClient.get(
             `/chat/history/${chatRoomId}`,
             {}
-        )
-        return response;
+        ).then(res => {
+            setChatHistories(res.data.data);
+        }).catch(error => {
+            console.log(error);
+            console.log("잘못된 채팅방 ID입니다.");
+        });
     }
 
     const goToListingDetail = () => {
@@ -90,14 +99,12 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                             {/* 좌측 사이드바 */}
                             <aside className="chat-modal-list">
                                         {myChatRoomDatas.map((myChatRoomData) => {
-                                            const isSelected = myChatRoomData.chatRoomId === selectedChatRoomId;
                                             return (
                                                 <ChatRoomButton
                                                                 key={myChatRoomData.chatRoomId}
                                                                 myChatRoomData={myChatRoomData}
                                                                 getCurrentChatRoom={getCurrentChatRoom}
-                                                                isSelected={isSelected}
-                                                                setSelectedChatRoomId={setSelectedChatRoomId}
+                                                                selectedChatRoomId={selectedChatRoomId}
                                                 />
                                             )
                                         })}
@@ -119,9 +126,10 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
 
                             {/* 분리된 메시지 리스트 */}
                             {/*<ChatMessageList messages={CHAT_MESSAGES} chatHistory={chatHistories}/>*/}
-                            <ChatMessageList messages={chatHistories}
-                                             currentPartnerEmail={currentChatRoom.contactUserInfo?.email}
-                                             isVisible={isVisible}/>
+                            <ChatMessageList chatHistories={chatHistories}
+                                             currentChatRoom={currentChatRoom}
+                                             setLastMessageContent={setLastMessageContent}
+                            />
 
                             {/* 분리된 하단 입력창 */}
                             <ChatInputForm/>
