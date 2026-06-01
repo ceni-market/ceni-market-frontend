@@ -8,6 +8,7 @@ import EmailConfirm from "./pages/auth/email-confirm/EmailConfirm.jsx";
 import SignupComplete from "./pages/auth/signup-complete/SignupComplete.jsx";
 import ProductDetail from "./pages/product/detail/ProductDetail.jsx";
 import ProductList from "./pages/product/list/ProductList.jsx";
+import SearchList from "./pages/search/SearchList.jsx";
 import ProductWrite from "./pages/product/write/ProductWrite.jsx";
 import Mypage from "./pages/mypage/my-info/Mypage.jsx";
 import MyRegisteredPosts from "./pages/mypage/my-posts/MyRegisteredPosts.jsx";
@@ -72,9 +73,10 @@ function App() {
                 <Route path="/find-password/verify" element={<EmailConfirm/>}/>
                 <Route path="/find-password/reset" element={<FindPassword step={3}/>}/>
                 <Route path="/find-password/complete" element={<FindPassword step={4}/>}/>
-                <Route path="/products" element={<ProductList/>}/>
-                <Route path="/donations" element={<DonationList/>}/>
-                <Route path="/products/:productId" element={<ProductDetail/>}/>
+                <Route path="/products" element={<ProtectedRoute><ProductList/></ProtectedRoute>}/>
+                <Route path="/donations" element={<ProtectedRoute><DonationList/></ProtectedRoute>}/>
+                <Route path="/search" element={<SearchList />}/>
+                <Route path="/products/:productId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
                 <Route path="/products/:productId/edit" element={<ProtectedRoute><ProductWrite/></ProtectedRoute>}/>
                 <Route path="/posts/:postId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
 

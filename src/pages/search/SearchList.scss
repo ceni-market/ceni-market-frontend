@@ -48,7 +48,7 @@ $list-shadow: rgba(12, 12, 13, 0.05);
 
 .product-list-sidebar {
   width: 180px;
-  height: 610px;
+  height: 620px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -71,6 +71,11 @@ $list-shadow: rgba(12, 12, 13, 0.05);
 .product-list-category-filter {
   height: 335px;
   padding: 25px;
+
+  .is-active {
+    color: #0b63d8;
+    font-weight: 700;
+  }
 
   ul {
     margin-top: 18px;
@@ -229,77 +234,18 @@ $list-shadow: rgba(12, 12, 13, 0.05);
   white-space: nowrap;
   cursor: pointer;
 
-  select {
-    border: 0;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    outline: 0;
-    cursor: pointer;
-    appearance: none;
-  }
-
   i {
     font-size: 8px;
     line-height: 1;
-    pointer-events: none;
   }
 }
 
 .product-list-grid {
   width: 919px;
-  margin-top: 20px;
+  margin-top: 28px;
   display: grid;
   grid-template-columns: repeat(5, 160px);
-  gap: 20px 30px;
-}
-
-.product-list-pagination {
-  width: 919px;
-  margin-top: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  button {
-    min-width: 32px;
-    height: 32px;
-    padding: 0 10px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid $list-border;
-    border-radius: 6px;
-    background: $list-surface;
-    color: $list-muted;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 14px;
-    white-space: nowrap;
-    cursor: pointer;
-
-    &:hover:not(:disabled):not(.is-active) {
-      border-color: $list-primary;
-      color: $list-primary;
-    }
-
-    &:disabled {
-      color: $list-time;
-      background: $list-bg;
-      cursor: default;
-    }
-
-    &.is-active {
-      border-color: $list-primary;
-      background: $list-primary;
-      color: $list-surface;
-    }
-  }
-
-  .product-list-pagination-arrow {
-    min-width: 54px;
-  }
+  gap: 28px 30px;
 }
 
 .product-list-card {
@@ -339,10 +285,6 @@ $list-shadow: rgba(12, 12, 13, 0.05);
   border-radius: 10px;
   background: rgba(17, 24, 39, 0.3);
   color: #ffffff;
-
-  .bi-heart-fill {
-    color: #ef4444;
-  }
 
   i {
     width: 11px;

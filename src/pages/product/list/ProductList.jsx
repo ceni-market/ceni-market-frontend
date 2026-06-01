@@ -25,7 +25,6 @@ const SORT_OPTIONS = [
   { label: '높은 가격순', value: 'price,desc' },
 ];
 
-const PRICE_FILTERS = ['1만원 이하', '1~5만원', '5~10만원', '10만원 이상'];
 const PAGE_SIZE = 10;
 
 // createdAt을 "방금 전", "3시간 전"처럼 목록용 상대 시간으로 변환
@@ -78,9 +77,11 @@ function ProductList() {
   const currentPage = searchParams.get('page')
       ? Number(searchParams.get('page'))
       : 0;
+
   const selectedCategoryId = searchParams.get('categoryId')
       ? Number(searchParams.get('categoryId'))
       : null;
+
   const currentSort = searchParams.get('sort') || DEFAULT_SORT;
 
   // 서버 응답 데이터
@@ -90,12 +91,18 @@ function ProductList() {
   const [errorMessage, setErrorMessage] = useState('');
 
   // 페이지 버튼을 5개씩 묶어서 보여주기 위한 계산값
-  const PAGE_GROUP_SIZE = 5;
-  const currentGroup = Math.floor(currentPage / PAGE_GROUP_SIZE);
-  const startPage = currentGroup * PAGE_GROUP_SIZE;
-  const endPage = Math.min(startPage + PAGE_GROUP_SIZE, totalPages);
-  const hasPrevGroup = startPage > 0;
-  const hasNextGroup = endPage < totalPages;
+  const visiblePageCount = 5;
+  const pageStart = Math.max(
+      Math.min(
+          currentPage - Math.floor(visiblePageCount / 2),
+          totalPages - visiblePageCount,
+      ),
+      0,
+  );
+  const pageNumbers = Array.from(
+      { length: Math.min(visiblePageCount, totalPages) },
+      (_, index) => pageStart + index,
+  );
 
   // 카테고리를 바꾸면 첫 페이지부터 다시 조회한다.
   const handleCategoryClick = (categoryId) => {
@@ -113,6 +120,11 @@ function ProductList() {
 
   // 페이지 이동도 URL query에 저장해서 뒤로가기/새로고침 시 유지한다.
   const handlePageClick = (pageNumber) => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+
     const nextParams = new URLSearchParams(searchParams);
     nextParams.set('page', String(pageNumber));
     setSearchParams(nextParams);
@@ -169,7 +181,7 @@ function ProductList() {
                     <button
                         type="button"
                         onClick={() => handleCategoryClick(category.id)}
-                        className={selectedCategoryId === category.id ? 'active' : ''}
+                        className={selectedCategoryId === category.id ? 'is-active' : ''}
                     >
                       <i className="bi bi-tag" />
                       <span>{category.name}</span>
@@ -178,28 +190,6 @@ function ProductList() {
               ))}
             </ul>
           </div>
-
-          {/*<div className="product-list-filter product-list-price-filter">*/}
-          {/*  <h2>가격대</h2>*/}
-          {/*  <div className="product-list-price-inputs">*/}
-          {/*    <label className="product-list-min-price">*/}
-          {/*      <input type="text" />*/}
-          {/*      <span>원</span>*/}
-          {/*    </label>*/}
-          {/*    <div className="product-list-price-to">~</div>*/}
-          {/*    <label className="product-list-max-price">*/}
-          {/*      <input type="text" />*/}
-          {/*      <span>원</span>*/}
-          {/*    </label>*/}
-          {/*  </div>*/}
-          {/*  <div className="product-list-price-tags">*/}
-          {/*    {PRICE_FILTERS.map((filter) => (*/}
-          {/*      <button type="button" key={filter}>*/}
-          {/*        {filter}*/}
-          {/*      </button>*/}
-          {/*    ))}*/}
-          {/*  </div>*/}
-          {/*</div>*/}
         </aside>
 
         <section className="product-list-panel">
@@ -235,38 +225,32 @@ function ProductList() {
           {totalPages > 1 && (
               <div className="product-list-pagination">
                 <button
-                    className="product-list-page-control"
+                    className="product-list-pagination-arrow"
                     type="button"
-                    disabled={!hasPrevGroup}
-                    onClick={() => handlePageClick(startPage - PAGE_GROUP_SIZE)}
-                    aria-label="이전 페이지 그룹"
+                    disabled={currentPage === 0}
+                    onClick={() => handlePageClick(currentPage - 1)}
                 >
-                  <i className="bi bi-chevron-left" />
+                  이전
                 </button>
 
-                {Array.from({ length: endPage - startPage }, (_, index) => {
-                  const pageNumber = startPage + index;
-
-                  return (
+                {pageNumbers.map((pageNumber) => (
                       <button
                           type="button"
                           key={pageNumber}
-                          className={currentPage === pageNumber ? 'product-list-page-number active' : 'product-list-page-number'}
+                          className={currentPage === pageNumber ? 'is-active' : ''}
                           onClick={() => handlePageClick(pageNumber)}
                       >
                         {pageNumber + 1}
                       </button>
-                  );
-                })}
+                ))}
 
                 <button
-                    className="product-list-page-control"
+                    className="product-list-pagination-arrow"
                     type="button"
-                    disabled={!hasNextGroup}
-                    onClick={() => handlePageClick(endPage)}
-                    aria-label="다음 페이지 그룹"
+                    disabled={currentPage >= totalPages - 1}
+                    onClick={() => handlePageClick(currentPage + 1)}
                 >
-                  <i className="bi bi-chevron-right" />
+                  다음
                 </button>
               </div>
           )}

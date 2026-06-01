@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
 import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
@@ -15,28 +15,30 @@ import './ProductDetail.scss';
 
 // 상품 이미지가 없을 때는 기본 이미지를 넣어서 Swiper가 비지 않게 처리
 function ProductGallery({ product }) {
-  const images = product.images?.length > 0
-      ? product.images
-      : [{ imageUrl: '/assets/images/product-default-img.png' }];
+  const images =
+    product.images?.length > 0 ? product.images : [{ imageUrl: '/assets/images/product-default-img.png' }];
+  const hasMultipleImages = images.length > 1;
 
   return (
-      <div className="product-detail-gallery">
-        <Swiper
-            className="product-detail-gallery-main"
-            cssMode
-            navigation
-            pagination
-            mousewheel
-            keyboard
-            modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-        >
-          {images.map((image, index) => (
-              <SwiperSlide key={image.id || `${image.imageUrl}-${index}`}>
-                <img src={image.imageUrl} alt={`${product.title} 상품 이미지 ${index + 1}`} />
-              </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+    <div className="product-detail-gallery">
+      <Swiper
+        className="product-detail-gallery-main"
+        slidesPerView={1}
+        spaceBetween={30}
+        loop={hasMultipleImages}
+        pagination={{
+          clickable: true,
+        }}
+        navigation={hasMultipleImages}
+        modules={[Pagination, Navigation]}
+      >
+        {images.map((image, index) => (
+          <SwiperSlide key={image.id || `${image.imageUrl}-${index}`}>
+            <img src={image.imageUrl} alt={`${product.title} 상품 이미지 ${index + 1}`} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </div>
   );
 }
 
@@ -129,27 +131,27 @@ function ProductDetail() {
 
   if (errorMessage) {
     return (
-        <main className="product-detail-page">
-          <AppHeader />
-          <AppNav />
-          <section className="product-detail-body content-container">
-            <p>{errorMessage}</p>
-          </section>
-          <AppFooter />
-        </main>
+      <main className="product-detail-page">
+        <AppHeader />
+        <AppNav />
+        <section className="product-detail-body content-container">
+          <p>{errorMessage}</p>
+        </section>
+        <AppFooter />
+      </main>
     );
   }
 
   if (!product) {
     return (
-        <main className="product-detail-page">
-          <AppHeader />
-          <AppNav />
-          <section className="product-detail-body content-container">
-            <p>상품 정보를 불러오는 중입니다.</p>
-          </section>
-          <AppFooter />
-        </main>
+      <main className="product-detail-page">
+        <AppHeader />
+        <AppNav />
+        <section className="product-detail-body content-container">
+          <p>상품 정보를 불러오는 중입니다.</p>
+        </section>
+        <AppFooter />
+      </main>
     );
   }
   return (
@@ -157,21 +159,21 @@ function ProductDetail() {
       <AppHeader />
       <AppNav />
 
-      <section className="product-detail-banner content-container" data-node-id="456:2058">
+      <section className="product-detail-banner content-container">
         <h1>나눔은 마음을 이어줍니다</h1>
         <img src="/assets/images/detail-banner-img.png" alt="" />
       </section>
 
-      <section className="product-detail-body content-container" data-node-id="456:1999">
+      <section className="product-detail-body content-container">
         <div className="product-detail-breadcrumb">
           홈 &gt; {product.type === 'GIVEAWAY' ? '나눔' : '상품'} &gt; {product.category?.name}
         </div>
 
         <div className="product-detail-layout">
-          <article className="product-detail-card" data-node-id="456:2020">
+          <article className="product-detail-card">
             <ProductGallery product={product} />
 
-            <section className="product-detail-info" aria-label="상품 정보" data-node-id="456:2022">
+            <section className="product-detail-info">
               <h2>{product.title}</h2>
               <p className="product-detail-price">
                 {product.type === 'GIVEAWAY' ? (
@@ -198,7 +200,7 @@ function ProductDetail() {
             </section>
           </article>
 
-          <aside className="product-detail-side" data-node-id="456:2002">
+          <aside className="product-detail-side">
             {product.owner ? (
               <>
                 <button
