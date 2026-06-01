@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useParams } from 'react-router-dom';
 import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
 import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
@@ -53,7 +53,10 @@ function ProductWrite() {
   const [categories, setCategories] = useState([]);
   // 사용자가 선택한 이미지 파일 목록
   const [imageFiles, setImageFiles] = useState([]);
+  const [existingImageUrls, setExistingImageUrls] = useState([]);
   const navigate = useNavigate();
+  const { productId } = useParams();
+  const isEditMode = Boolean(productId);
 
   // input/select/radio 값이 바뀔 때 form state를 갱신
   const handleChange = (event) => {
@@ -139,6 +142,8 @@ function ProductWrite() {
 
         // 이미지 업로드 응답에서 게시글 등록에 사용할 이미지 URL 목록 추출
         imageUrls = imageResponse.data.data.imageUrls;
+      } else if (isEditMode) {
+        imageUrls = existingImageUrls;
       }
 
       // 백엔드 ListingCreateRequest 형식에 맞춰 전송할 데이터 구성
@@ -151,13 +156,20 @@ function ProductWrite() {
         imageUrls: imageUrls,
       };
 
+      if (isEditMode) {
+        await apiClient.put(`/listings/${productId}`, payload);
+        alert('게시글이 수정되었습니다.');
+        navigate(`/products/${productId}`);
+        return;
+      }
+
       const response = await apiClient.post('/listings', payload);
       const listingId = response.data.data.listingId;
       alert('게시글이 등록되었습니다.');
       navigate(`/products/${listingId}`);
     } catch (error) {
-      console.error('게시글 등록 실패:', error);
-      alert('게시글 등록에 실패했습니다.');
+      console.error(isEditMode ? '게시글 수정 실패:' : '게시글 등록 실패:', error);
+      alert(isEditMode ? '게시글 수정에 실패했습니다.' : '게시글 등록에 실패했습니다.');
     }
   };
 
@@ -174,6 +186,35 @@ function ProductWrite() {
       fetchCategories();
     }, []);
 
+  // 수정 화면에서는 기존 게시글 데이터를 조회해서 form에 채운다.
+  useEffect(() => {
+    if (!isEditMode) {
+      return;
+    }
+
+    const fetchProductForEdit = async () => {
+      try {
+        const response = await apiClient.get(`/listings/${productId}/edit`);
+        const product = response.data.data;
+
+        setForm({
+          type: product.type,
+          categoryId: String(product.category.id),
+          title: product.title,
+          description: product.description,
+          price: String(product.price),
+        });
+        setExistingImageUrls(product.images?.map((image) => image.imageUrl) || []);
+      } catch (error) {
+        console.error('수정할 게시글 조회 실패', error);
+        alert('수정할 게시글 정보를 불러오지 못했습니다.');
+        navigate(`/products/${productId}`);
+      }
+    };
+
+    fetchProductForEdit();
+  }, [isEditMode, productId, navigate]);
+
   return (
     <main className="product-write-page">
       <AppHeader />
@@ -181,8 +222,12 @@ function ProductWrite() {
 
       <section className="product-write content-container">
         <div className="product-write-head">
-          <h1>글쓰기</h1>
-          <p>세니마켓에 판매하거나 나눔할 물건을 올려보세요.</p>
+          <h1>{isEditMode ? '글 수정' : '글쓰기'}</h1>
+          <p>
+            {isEditMode
+                ? '게시글 내용을 수정해보세요.'
+                : '세니마켓에 판매하거나 나눔할 물건을 올려보세요.'}
+          </p>
         </div>
 
         <form className="product-write-layout" onSubmit={handleSubmit}>
@@ -229,10 +274,16 @@ function ProductWrite() {
                 <strong>
                   {imageFiles.length > 0
                     ? `${imageFiles[0].name}${imageFiles.length > 1 ? ` 외 ${imageFiles.length - 1}개` : ''}`
+                    : isEditMode && existingImageUrls.length > 0
+                      ? `현재 이미지 ${existingImageUrls.length}장`
                     : '사진을 추가하세요'}
                 </strong>
                 <span>(최대 10장, 개당 5MB 이하)</span>
-                <small>클릭해서 이미지를 선택해 주세요</small>
+                <small>
+                  {isEditMode
+                    ? '새 이미지를 선택하면 기존 이미지를 대체합니다'
+                    : '클릭해서 이미지를 선택해 주세요'}
+                </small>
               </label>
             </div>
 
@@ -267,7 +318,7 @@ function ProductWrite() {
                 <span>뒤로가기</span>
               </NavLink>
               <button className="product-write-submit" type="submit">
-                등록하기
+                {isEditMode ? '수정하기' : '등록하기'}
               </button>
             </div>
           </aside>
