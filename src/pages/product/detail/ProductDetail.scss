@@ -139,7 +139,9 @@ $detail-shadow: rgba(12, 12, 13, 0.05);
     font-size: 20px;
     font-weight: 700;
     line-height: normal;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
 }
 

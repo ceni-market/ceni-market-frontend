@@ -229,9 +229,20 @@ $list-shadow: rgba(12, 12, 13, 0.05);
   white-space: nowrap;
   cursor: pointer;
 
+  select {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: 0;
+    cursor: pointer;
+    appearance: none;
+  }
+
   i {
     font-size: 8px;
     line-height: 1;
+    pointer-events: none;
   }
 }
 
