@@ -2,12 +2,13 @@ import AppFeatures from '../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../widgets/app-footer/AppFooter.jsx';
 import AppHeader from '../../widgets/app-header/AppHeader.jsx';
 import AppNav from '../../widgets/app-nav/AppNav.jsx';
-import './DonationList.scss';
-import DonationCard from "./components/DonationCard.jsx";
-import DonationSide from "./components/DonationSide.jsx";
+import './SearchList.scss';
+import SearchCard from "./components/SearchCard.jsx";
+import SearchSide from "./components/SearchSide.jsx";
 import {useState} from "react";
 import {apiClient} from "../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
+import {useSearchParams} from "react-router-dom";
 
 const categories = [
   { name: '전체', id: null },
@@ -22,22 +23,23 @@ const categories = [
 
 const price_filters = ['1만원 이하', '1~5만원', '5~10만원', '10만원 이상'];
 
-function DonationList() {
+function SearchList() {
   const [total, setTotal] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [page, setPage] = useState(0);
   const size = 10;
-  const type = 'GIVEAWAY';
+  const [searchParams] = useSearchParams();
+  const keyword = searchParams.get("keyword");
 
-  const fetchDonations = async (categoryId) => {
+  const fetchSearch = async (categoryId, keyword) => {
     const response = await apiClient.get(
-        `/listings`,
+        `/search`,
         {
           params: {
             page,
             size,
-            type,
             ...(categoryId && {categoryId}),
+            keyword,
           }
         }
     )
@@ -46,8 +48,9 @@ function DonationList() {
   }
 
   const {data, isLoading, error} = useQuery({
-    queryKey: ['donations', selectedCategory, page, size],
-    queryFn: () => fetchDonations(selectedCategory),
+    queryKey: ['search', selectedCategory, page, size, keyword],
+    queryFn: () => fetchSearch(selectedCategory, keyword),
+    enabled: !!keyword,
   })
 
   // 여기서부터
@@ -72,24 +75,23 @@ function DonationList() {
     setPage(0);
   }
 
-
   return (
     <main className="product-list-page">
       <AppHeader />
       <AppNav />
 
       <section className="product-list-banner content-container">
-        <h1>나눔 상품</h1>
-        <p>필요한 사람에게 따뜻한 마음을 전해보세요</p>
+        <h1>검색 결과</h1>
+        <p>원하는 상품을 빠르게 찾아보세요</p>
       </section>
 
       <section className="product-list-body content-container">
-        <DonationSide categories = {categories} price_filters = {price_filters} selectedCategory = {selectedCategory} handleCategoryChange = {handleCategoryChange} />
+        <SearchSide categories = {categories} price_filters = {price_filters} selectedCategory = {selectedCategory} handleCategoryChange = {handleCategoryChange} />
 
         <section className="product-list-panel">
           <div className="product-list-toolbar">
             <h2>
-              전체 <strong>{total}</strong> 건
+              총 <strong>{total}</strong> 개의 상품을 찾았어요
             </h2>
             {/*<button className="product-list-sort" type="button">*/}
             {/*  <span>최신 등록순</span>*/}
@@ -99,7 +101,7 @@ function DonationList() {
 
           <div className="product-list-grid">
             {data?.content?.map((item) => (
-              <DonationCard item={item} key={item.id} />
+              <SearchCard item={item} key={item.id} />
             ))}
           </div>
           {data?.totalPages > 1 && (
@@ -143,4 +145,4 @@ function DonationList() {
   );
 }
 
-export default DonationList;
+export default SearchList;

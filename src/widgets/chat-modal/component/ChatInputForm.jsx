@@ -1,7 +1,7 @@
 import {useWebsocket} from "../../../WebSocketProvider.jsx";
-import {useRef} from "react";
 import {useAuthStore} from "../../../store/authStore.js";
 import {apiClient} from "../../../api/apiClient.js";
+import {useRef} from "react";
 
 function ChatInputForm({ currentChatRoom }) {
 
@@ -22,7 +22,7 @@ function ChatInputForm({ currentChatRoom }) {
 
     const sendMessage = () => {
         const msg = inputRef.current.value.trim();
-        if (msg || clientRef?.current?.connected) {
+        if (msg.length >= 1 && clientRef?.current?.connected) {
             publish(msg, "TEXT");
         }
         inputRef.current.value = "";
@@ -45,8 +45,8 @@ function ChatInputForm({ currentChatRoom }) {
 
     return (
         <footer className="chat-modal-compose">
-            <label className="chat-modal-input" htmlFor="chat-message">
-                <input id="chat-message" ref={inputRef} type="text" placeholder="메시지를 입력하세요." />
+            <label className="chat-modal-input" htmlFor="chat-message" >
+                <input id="chat-message" ref={inputRef} onKeyDown={(event) => { if(event.key === "Enter" && event.nativeEvent.isComposing != true) { sendMessage(); }}} placeholder="메시지를 입력하세요." />
                 <label htmlFor="chat-message-file">
                     <i className="bi bi-image" />
                     <input type="file" id="chat-message-file" accept="image/*" onChange={sendImage} hidden />

@@ -1,8 +1,10 @@
 import {useWebsocket} from "../../../WebSocketProvider.jsx";
 import {useEffect, useRef, useState} from "react";
+import {useMutation, useQuery} from "@tanstack/react-query";
+import {apiClient} from "../../../api/apiClient.js";
 // import MessageToast from "./MessageToast.jsx";
 
-function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent }) {
+function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent, refetchChatRooms }) {
     //새로 온 메시지 저장 State
     const [messages, setMessages] = useState([]);
     //현재 스크롤이 맨 아래에 있는지 판별한 값을 저장하는 State
@@ -24,6 +26,19 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
         }
     }, [currentChatRoom]);
 
+    //마지막 조회시간 업데이트 요청
+    const updateLastRead = async () => {
+        const response = await apiClient.get(
+            `/chat/${currentChatRoom.chatRoomId}/readAt`,
+            {}
+        )
+    }
+
+    const { mutate: reUpdateLastRead, isLoading: updateLastReadLoading, error: updateLastReadError, status: success} = useMutation({
+        mutationKey: ['updateLastRead'],
+        mutationFn: () => updateLastRead(),
+    })
+
     //기존 채팅 기록과 새로 온 메시지를 합쳐서 저장하는 변수
     const allMessages = [...chatHistories, ...messages];
 
@@ -36,7 +51,8 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
 
     //채팅창 새로 로딩 시 스크롤 맨 아래로 내리는 useEffect
     useEffect(() => {
-            scrollToBottom();
+        updateLastRead();
+        scrollToBottom();
     }, [chatHistories]);
 
     //새로운 채팅이 들어왔을 때, 현재 스크롤 위치가 맨 아래인지 판별해서 맞으면 새 메시지가 보이게 스크롤을 내리는 useEffect
@@ -44,6 +60,9 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
         if(isBottom) {
             scrollToBottom();
         }
+        //마지막 조회 시간 업데이트
+        reUpdateLastRead();
+        refetchChatRooms();
     }, [messages]);
 
     //채팅방 내부 컴포넌트 DOM 객체의 데이터를 바탕으로 현재 스크롤이 맨 아래인지 위쪽인지 판별해서 setIsBottom의 값을 바꾸는 useEffect
@@ -58,21 +77,16 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
         return () => elem.removeEventListener("scroll", handleScroll);
     }, []);
 
-
-
-
     //토스트 팝업
     // const [messageToast, setMessageToast] = useState(false);
-
-
 
     return (
         <div id="chat-messages-area" className="chat-modal-messages">
             {/*날짜 시스템 메시지*/}
             {/*<p className="chat-modal-date">2026년 05월 01일</p>*/}
-            {allMessages.map((message) => {
+            {allMessages.map((message, index) => {
 
-                return (<div className={`chat-message chat-message-${message.senderEmail === currentChatRoom.contactUserInfo?.email ? "partner" : "me" }`} key={message.createdAt}>
+                return (<div className={`chat-message chat-message-${message.senderEmail === currentChatRoom.contactUserInfo?.email ? "partner" : "me" }`} key={message.index}>
 
                     {message.contentType === 'IMAGE' ? (
                         <img className="chat-message-image" src={message.message} alt="전송된 이미지" />

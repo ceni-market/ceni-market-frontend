@@ -229,9 +229,20 @@ $list-shadow: rgba(12, 12, 13, 0.05);
   white-space: nowrap;
   cursor: pointer;
 
+  select {
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: 0;
+    cursor: pointer;
+    appearance: none;
+  }
+
   i {
     font-size: 8px;
     line-height: 1;
+    pointer-events: none;
   }
 }
 
@@ -244,15 +255,17 @@ $list-shadow: rgba(12, 12, 13, 0.05);
 }
 
 .product-list-pagination {
-  margin-top: 16px;
+  width: 919px;
+  margin-top: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 
   button {
-    width: 30px;
-    height: 30px;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -262,24 +275,30 @@ $list-shadow: rgba(12, 12, 13, 0.05);
     color: $list-muted;
     font-size: 12px;
     font-weight: 600;
-    line-height: 1;
+    line-height: 14px;
+    white-space: nowrap;
     cursor: pointer;
+
+    &:hover:not(:disabled):not(.is-active) {
+      border-color: $list-primary;
+      color: $list-primary;
+    }
+
+    &:disabled {
+      color: $list-time;
+      background: $list-bg;
+      cursor: default;
+    }
+
+    &.is-active {
+      border-color: $list-primary;
+      background: $list-primary;
+      color: $list-surface;
+    }
   }
 
-  button.active {
-    border-color: $list-primary;
-    background: $list-primary;
-    color: #ffffff;
-  }
-
-  button:disabled {
-    opacity: 0.35;
-    cursor: not-allowed;
-  }
-
-  i {
-    font-size: 11px;
-    line-height: 1;
+  .product-list-pagination-arrow {
+    min-width: 54px;
   }
 }
 
@@ -320,6 +339,10 @@ $list-shadow: rgba(12, 12, 13, 0.05);
   border-radius: 10px;
   background: rgba(17, 24, 39, 0.3);
   color: #ffffff;
+
+  .bi-heart-fill {
+    color: #ef4444;
+  }
 
   i {
     width: 11px;

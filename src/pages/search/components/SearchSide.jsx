@@ -1,4 +1,4 @@
-const DonationSide = ({categories = [], price_filters = [], selectedCategory, handleCategoryChange}) => {
+const SearchSide = ({categories = [], price_filters = [], selectedCategory, handleCategoryChange}) => {
     return (
         <aside className="product-list-sidebar">
             <div className="product-list-filter product-list-category-filter">
@@ -44,6 +44,6 @@ const DonationSide = ({categories = [], price_filters = [], selectedCategory, ha
     )
 }
 
-export default DonationSide;
+export default SearchSide;
 
 

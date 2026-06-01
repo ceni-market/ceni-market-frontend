@@ -8,6 +8,7 @@ import EmailConfirm from "./pages/auth/email-confirm/EmailConfirm.jsx";
 import SignupComplete from "./pages/auth/signup-complete/SignupComplete.jsx";
 import ProductDetail from "./pages/product/detail/ProductDetail.jsx";
 import ProductList from "./pages/product/list/ProductList.jsx";
+import SearchList from "./pages/search/SearchList.jsx";
 import ProductWrite from "./pages/product/write/ProductWrite.jsx";
 import Mypage from "./pages/mypage/my-info/Mypage.jsx";
 import MyRegisteredPosts from "./pages/mypage/my-posts/MyRegisteredPosts.jsx";
@@ -21,6 +22,7 @@ import LikePosts from "./pages/mypage/my-likes/LikePosts.jsx";
 import {useAuthStore} from "./store/authStore";
 import OAuth2RedirectHandler from "./pages/auth/login/OAuth2RedirectHandler.jsx";
 import DonationList from "./pages/donation/DonationList.jsx";
+import ScrollToTop from "./hooks/useScrollToTop.jsx";
 
 // 🔒 [디펜시브 코드] 1차 주소창 방어벽
 // 로그인 상태가 아니면 비정상적인 주소창 타이핑 접근을 차단하고 로그인 페이지로 강제 리다이렉트합니다.
@@ -33,7 +35,6 @@ const ProtectedRoute = ({children}) => {
     }
     return children;
 };
-
 
 function App() {
     // const [isConnect, setIsConnect] = useState(true);
@@ -57,6 +58,7 @@ function App() {
     }, []);
     return (
         <WebSocketProvider>
+            <ScrollToTop />
             <Routes>
                 {/* 🌍 1. 누구나 자유롭게 접근 가능한 공용(Public) 라우트 */}
                 <Route path="/" element={<Home/>}/>
@@ -73,6 +75,7 @@ function App() {
                 <Route path="/find-password/complete" element={<FindPassword step={4}/>}/>
                 <Route path="/products" element={<ProtectedRoute><ProductList/></ProtectedRoute>}/>
                 <Route path="/donations" element={<ProtectedRoute><DonationList/></ProtectedRoute>}/>
+                <Route path="/search" element={<SearchList />}/>
                 <Route path="/products/:productId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
                 <Route path="/products/:productId/edit" element={<ProtectedRoute><ProductWrite/></ProtectedRoute>}/>
                 <Route path="/posts/:postId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>

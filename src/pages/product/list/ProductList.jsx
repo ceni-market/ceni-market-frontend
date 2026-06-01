@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useSearchParams } from 'react-router-dom';
 import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
 import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
@@ -8,17 +8,23 @@ import {useState, useEffect} from "react";
 import {apiClient} from "../../../api/apiClient.js";
 
 const CATEGORIES = [
-  '전체',
-  'ITㆍ디지털',
-  '가전제품',
-  '가구ㆍ인테리어',
-  '생활ㆍ주방',
-  '스포츠ㆍ취미',
-  '도서ㆍ음반',
-  '유아ㆍ기타',
+  { name: '전체', id: null },
+  { name: 'ITㆍ디지털', id: 1 },
+  { name: '가전제품', id: 2 },
+  { name: '가구ㆍ인테리어', id: 3 },
+  { name: '생활ㆍ주방', id: 4 },
+  { name: '스포츠ㆍ취미', id: 5 },
+  { name: '도서ㆍ음반', id: 6 },
+  { name: '유아ㆍ기타', id: 7 },
 ];
 
-const PRICE_FILTERS = ['1만원 이하', '1~5만원', '5~10만원', '10만원 이상'];
+const DEFAULT_SORT = 'createdAt,desc';
+const SORT_OPTIONS = [
+  { label: '최신 등록순', value: DEFAULT_SORT },
+  { label: '낮은 가격순', value: 'price,asc' },
+  { label: '높은 가격순', value: 'price,desc' },
+];
+
 const PAGE_SIZE = 10;
 
 // createdAt을 "방금 전", "3시간 전"처럼 목록용 상대 시간으로 변환
@@ -45,7 +51,7 @@ function ProductCard({ product }) {
       <div className="product-list-card-thumb">
         <img src={product.image?.imageUrl || '/assets/images/product-default-img.png'} alt="" />
         <span className="product-list-card-like">
-          <i className="bi bi-heart" />
+          <i className={`bi ${product.likedByMe ? 'bi-heart-fill' : 'bi-heart'}`} />
           <span>{product.likeCount}</span>
         </span>
       </div>
@@ -65,23 +71,73 @@ function ProductCard({ product }) {
 }
 
 function ProductList() {
-  // 백엔드에서 받아온 상품 목록
-  const [products, setProducts] = useState([]);
-  // 페이지 상단에 보여줄 전체 상품 개수
-  const [totalCount, setTotalCount] = useState(0);
-  // 상품 목록 조회 실패 시 화면에 보여줄 메시지
-  const [errorMessage, setErrorMessage] = useState('');
-  // 페이징 처리를 위한 변수들
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const PAGE_GROUP_SIZE = 5;
-  const currentGroup = Math.floor(currentPage / PAGE_GROUP_SIZE);
-  const startPage = currentGroup * PAGE_GROUP_SIZE;
-  const endPage = Math.min(startPage + PAGE_GROUP_SIZE, totalPages);
-  const hasPrevGroup = startPage > 0;
-  const hasNextGroup = endPage < totalPages;
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // 상품 목록 페이지가 처음 열릴 때 상품 목록을 한 번 조회
+  // URL query를 목록 조회 조건으로 사용한다.
+  const currentPage = searchParams.get('page')
+      ? Number(searchParams.get('page'))
+      : 0;
+
+  const selectedCategoryId = searchParams.get('categoryId')
+      ? Number(searchParams.get('categoryId'))
+      : null;
+
+  const currentSort = searchParams.get('sort') || DEFAULT_SORT;
+
+  // 서버 응답 데이터
+  const [products, setProducts] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  // 페이지 버튼을 5개씩 묶어서 보여주기 위한 계산값
+  const visiblePageCount = 5;
+  const pageStart = Math.max(
+      Math.min(
+          currentPage - Math.floor(visiblePageCount / 2),
+          totalPages - visiblePageCount,
+      ),
+      0,
+  );
+  const pageNumbers = Array.from(
+      { length: Math.min(visiblePageCount, totalPages) },
+      (_, index) => pageStart + index,
+  );
+
+  // 카테고리를 바꾸면 첫 페이지부터 다시 조회한다.
+  const handleCategoryClick = (categoryId) => {
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (categoryId) {
+      nextParams.set('categoryId', String(categoryId));
+    } else {
+      nextParams.delete('categoryId');
+    }
+
+    nextParams.set('page', '0');
+    setSearchParams(nextParams);
+  };
+
+  // 페이지 이동도 URL query에 저장해서 뒤로가기/새로고침 시 유지한다.
+  const handlePageClick = (pageNumber) => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('page', String(pageNumber));
+    setSearchParams(nextParams);
+  };
+
+  const handleSortChange = (event) => {
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.set('sort', event.target.value);
+    nextParams.set('page', '0');
+    setSearchParams(nextParams);
+  };
+
+  // URL query 조건이 바뀔 때마다 상품 목록을 다시 조회한다.
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -89,13 +145,13 @@ function ProductList() {
           params: {
             page: currentPage,
             size: PAGE_SIZE,
+            sort: currentSort,
+            type: 'SALE',
+            ...(selectedCategoryId && { categoryId: selectedCategoryId }),
           },
         });
-        // ApiResponse.data 안의 Page.content가 실제 상품 배열
         setProducts(response.data.data.content);
-        // totalElements는 전체 상품 개수
         setTotalCount(response.data.data.totalElements);
-        // totalPages는 전체 페이지 개수
         setTotalPages(response.data.data.totalPages);
       } catch (error) {
         console.error('상품 목록 조회 실패', error);
@@ -103,7 +159,7 @@ function ProductList() {
       }
     };
     fetchProducts();
-  }, [currentPage]);
+  }, [currentPage, selectedCategoryId, currentSort]);
 
   return (
     <main className="product-list-page">
@@ -121,36 +177,18 @@ function ProductList() {
             <h2>카테고리</h2>
             <ul>
               {CATEGORIES.map((category) => (
-                <li key={category}>
-                  <button type="button">
-                    <i className="bi bi-tag" />
-                    <span>{category}</span>
-                  </button>
-                </li>
+                  <li key={category.name}>
+                    <button
+                        type="button"
+                        onClick={() => handleCategoryClick(category.id)}
+                        className={selectedCategoryId === category.id ? 'is-active' : ''}
+                    >
+                      <i className="bi bi-tag" />
+                      <span>{category.name}</span>
+                    </button>
+                  </li>
               ))}
             </ul>
-          </div>
-
-          <div className="product-list-filter product-list-price-filter">
-            <h2>가격대</h2>
-            <div className="product-list-price-inputs">
-              <label className="product-list-min-price">
-                <input type="text" />
-                <span>원</span>
-              </label>
-              <div className="product-list-price-to">~</div>
-              <label className="product-list-max-price">
-                <input type="text" />
-                <span>원</span>
-              </label>
-            </div>
-            <div className="product-list-price-tags">
-              {PRICE_FILTERS.map((filter) => (
-                <button type="button" key={filter}>
-                  {filter}
-                </button>
-              ))}
-            </div>
           </div>
         </aside>
 
@@ -159,10 +197,16 @@ function ProductList() {
             <h2>
               전체 <strong>{totalCount}</strong> 건
             </h2>
-            <button className="product-list-sort" type="button">
-              <span>최신 등록순</span>
-              <i className="bi bi-chevron-down" />
-            </button>
+            <label className="product-list-sort">
+              <select value={currentSort} onChange={handleSortChange} aria-label="상품 정렬">
+                {SORT_OPTIONS.map((option) => (
+                  <option value={option.value} key={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <i className="bi bi-chevron-down" aria-hidden="true" />
+            </label>
           </div>
 
           <div className="product-list-grid">
@@ -181,38 +225,32 @@ function ProductList() {
           {totalPages > 1 && (
               <div className="product-list-pagination">
                 <button
-                    className="product-list-page-control"
+                    className="product-list-pagination-arrow"
                     type="button"
-                    disabled={!hasPrevGroup}
-                    onClick={() => setCurrentPage(startPage - PAGE_GROUP_SIZE)}
-                    aria-label="이전 페이지 그룹"
+                    disabled={currentPage === 0}
+                    onClick={() => handlePageClick(currentPage - 1)}
                 >
-                  <i className="bi bi-chevron-left" />
+                  이전
                 </button>
 
-                {Array.from({ length: endPage - startPage }, (_, index) => {
-                  const pageNumber = startPage + index;
-
-                  return (
+                {pageNumbers.map((pageNumber) => (
                       <button
                           type="button"
                           key={pageNumber}
-                          className={currentPage === pageNumber ? 'product-list-page-number active' : 'product-list-page-number'}
-                          onClick={() => setCurrentPage(pageNumber)}
+                          className={currentPage === pageNumber ? 'is-active' : ''}
+                          onClick={() => handlePageClick(pageNumber)}
                       >
                         {pageNumber + 1}
                       </button>
-                  );
-                })}
+                ))}
 
                 <button
-                    className="product-list-page-control"
+                    className="product-list-pagination-arrow"
                     type="button"
-                    disabled={!hasNextGroup}
-                    onClick={() => setCurrentPage(endPage)}
-                    aria-label="다음 페이지 그룹"
+                    disabled={currentPage >= totalPages - 1}
+                    onClick={() => handlePageClick(currentPage + 1)}
                 >
-                  <i className="bi bi-chevron-right" />
+                  다음
                 </button>
               </div>
           )}
