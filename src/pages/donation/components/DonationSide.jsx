@@ -19,27 +19,27 @@ const DonationSide = ({categories = [], price_filters = [], selectedCategory, ha
                 </ul>
             </div>
 
-            <div className="product-list-filter product-list-price-filter">
-                <h2>가격대</h2>
-                <div className="product-list-price-inputs">
-                    <label className="product-list-min-price">
-                        <input type="text" disabled={true}/>
-                        <span>원</span>
-                    </label>
-                    <div className="product-list-price-to">~</div>
-                    <label className="product-list-max-price">
-                        <input type="text" disabled={true}/>
-                        <span>원</span>
-                    </label>
-                </div>
-                <div className="product-list-price-tags">
-                    {price_filters.map((filter) => (
-                        <button type="button" key={filter} disabled={true}>
-                            {filter}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            {/*<div className="product-list-filter product-list-price-filter">*/}
+            {/*    <h2>가격대</h2>*/}
+            {/*    <div className="product-list-price-inputs">*/}
+            {/*        <label className="product-list-min-price">*/}
+            {/*            <input type="text" disabled={true}/>*/}
+            {/*            <span>원</span>*/}
+            {/*        </label>*/}
+            {/*        <div className="product-list-price-to">~</div>*/}
+            {/*        <label className="product-list-max-price">*/}
+            {/*            <input type="text" disabled={true}/>*/}
+            {/*            <span>원</span>*/}
+            {/*        </label>*/}
+            {/*    </div>*/}
+            {/*    <div className="product-list-price-tags">*/}
+            {/*        {price_filters.map((filter) => (*/}
+            {/*            <button type="button" key={filter} disabled={true}>*/}
+            {/*                {filter}*/}
+            {/*            </button>*/}
+            {/*        ))}*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </aside>
     )
 }

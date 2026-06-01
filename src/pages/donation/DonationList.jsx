@@ -91,10 +91,10 @@ function DonationList() {
             <h2>
               전체 <strong>{total}</strong> 건
             </h2>
-            <button className="product-list-sort" type="button">
-              <span>최신 등록순</span>
-              <i className="bi bi-chevron-down" />
-            </button>
+            {/*<button className="product-list-sort" type="button">*/}
+            {/*  <span>최신 등록순</span>*/}
+            {/*  <i className="bi bi-chevron-down" />*/}
+            {/*</button>*/}
           </div>
 
           <div className="product-list-grid">

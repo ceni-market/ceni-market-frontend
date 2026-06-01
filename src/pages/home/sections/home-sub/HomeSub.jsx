@@ -1,19 +1,24 @@
 import { Link } from 'react-router-dom';
 import './HomeSub.scss';
-
-const RECENT_SHARES = [
-  '책상 의자 나눔합니다.',
-  '반려식물 화분체 나눔해요',
-  '전자레인지 나눔합니다',
-  '도서 묶음 나눔합니다',
-];
+import {useQuery} from "@tanstack/react-query";
+import {apiClient} from "../../../../api/apiClient.js";
 
 function HomeSub() {
+
+  const { data: homeRecentDonations } = useQuery({
+    queryKey: ['homeRecentDonations'],
+    queryFn: async () => {
+      const response = await apiClient.get(`/listings?type=GIVEAWAY&size=4`)
+      return response.data.data;
+    }
+  })
+
+
   return (
     <section className="home-sub" data-node-id="425:2031">
       <div className="home-sub-inner content-container">
         <div className="home-sub-content">
-          <Link className="home-sub-banner home-sub-donation" to="/">
+          <Link className="home-sub-banner home-sub-donation" to="/donations">
             <img
               className="home-sub-banner-image"
               src="/assets/images/sub-donation.png"
@@ -30,7 +35,7 @@ function HomeSub() {
             </span>
           </Link>
 
-          <Link className="home-sub-banner home-sub-guide" to="/">
+          <Link className="home-sub-banner home-sub-guide" to="/" onClick={()=>window.alert("준비중입니다.")}>
             <img
               className="home-sub-banner-image"
               src="/assets/images/sub-guide.png"
@@ -57,19 +62,19 @@ function HomeSub() {
               <h2 className="home-sub-recent-title" id="recent-share-title">
                 최근 나눔 글
               </h2>
-              <Link className="home-sub-recent-more" to="/">
+              <Link className="home-sub-recent-more" to="/donations">
                 더 보기 &gt;
               </Link>
             </div>
 
             <div className="home-sub-recent-list">
-              {RECENT_SHARES.map((share) => (
-                <Link className="home-sub-recent-item" to="/" key={share}>
+              {homeRecentDonations?.content?.map((product) => (
+                <Link className="home-sub-recent-item" to={`/products/${product?.id}`} key={product?.id}>
                   <span className="home-sub-recent-left">
                     <span className="home-sub-recent-badge">나눔</span>
-                    <span className="home-sub-recent-name">{share}</span>
+                    <span className="home-sub-recent-name">{product?.title}</span>
                   </span>
-                  <span className="home-sub-recent-time">2시간 전</span>
+                  <span className="home-sub-recent-time">{product.updatedAt?.split('T', 1)}</span>
                 </Link>
               ))}
             </div>
