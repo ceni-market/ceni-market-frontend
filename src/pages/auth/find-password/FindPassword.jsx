@@ -146,6 +146,41 @@ function EmailStep({ onNext, setEmail }) {
 // [2단계] 🎯 신규 추가: 이메일 링크 클릭 폴링 대기 컴포넌트
 // ==========================================
 function VerifyStep({ email, onNext, setToken }) {
+
+    // 1. 재발송 관련 상태 추가 (초기값: 60초/비활성 상태로 시작)
+    const [isResendDisabled, setIsResendDisabled] = useState(true);
+    const [resendTimer, setResendTimer] = useState(60);
+
+    // 2. 초기 60초 쿨타임 및 타이머 로직
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setResendTimer((prev) => {
+                if (prev <= 1) {
+                    clearInterval(timer);
+                    setIsResendDisabled(false);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // 3. 재발송 핸들러
+    const handleResend = async () => {
+        try {
+            await axios.post(`${BACKEND_URL}/api/auth/password-reset/email-request`, {
+                email: email,
+                purpose: 'PASSWORDRESET'
+            });
+            alert('인증 메일이 재발송되었습니다.');
+            setIsResendDisabled(true);
+            setResendTimer(60);
+        } catch (error) {
+            alert('재발송에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        }
+    };
+
     useEffect(() => {
         // 1.5초 간격으로 백엔드 테이블 감시 시작
         const pollingInterval = setInterval(async () => {
@@ -179,7 +214,21 @@ function VerifyStep({ email, onNext, setToken }) {
                     <span style={{ color: '#0d6efd', fontWeight: 'bold' }}>{email}</span> 주소로 발송된<br />
                     인증 링크를 클릭하시면 비밀번호 재설정 화면으로 자동 전환됩니다.
                 </p>
-                <div style={{ marginTop: '25px', color: '#999', fontSize: '13px' }}>
+                <div style={{ marginTop: '15px' }}>
+                    <button
+                        onClick={handleResend}
+                        disabled={isResendDisabled}
+                        style={{
+                            background: 'none', border: 'none', textDecoration: 'underline',
+                            color: isResendDisabled ? '#ccc' : '#0d6efd',
+                            cursor: isResendDisabled ? 'not-allowed' : 'pointer',
+                            fontSize: '14px'
+                        }}
+                    >
+                        {isResendDisabled ? `메일을 못 받으셨나요? 재발송 (${resendTimer}초)` : "메일을 못 받으셨나요? 재발송"}
+                    </button>
+                </div>
+                <div style={{ marginTop: '15px', color: '#999', fontSize: '13px' }}>
                     <span className="spinner-border spinner-border-sm text-primary" role="status" style={{ marginRight: '8px' }}></span>
                     사용자의 메일 확인을 기다리는 중...
                 </div>
