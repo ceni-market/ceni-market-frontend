@@ -260,9 +260,8 @@ function ProductWrite() {
             <label className="product-write-field">
               <span className="product-write-label">제목</span>
               <span className="product-write-title-control">
-                <input type="text" name="title" value={form.title} onChange={handleChange} maxLength="150" placeholder="제목을 입력해주세요 (최대 150자)" />
-                {/* 백엔드 제목 제한과 맞춘 글자 수 표시 */}
-                <span>{form.title.length}/150</span>
+                <input type="text" name="title" value={form.title} onChange={handleChange} maxLength="50" placeholder="제목을 입력해주세요 (최대 50자)" />
+                <span>{form.title.length}/50</span>
               </span>
             </label>
 

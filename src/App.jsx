@@ -72,9 +72,9 @@ function App() {
                 <Route path="/find-password/verify" element={<EmailConfirm/>}/>
                 <Route path="/find-password/reset" element={<FindPassword step={3}/>}/>
                 <Route path="/find-password/complete" element={<FindPassword step={4}/>}/>
-                <Route path="/products" element={<ProtectedRoute><ProductList/></ProtectedRoute>}/>
-                <Route path="/donations" element={<ProtectedRoute><DonationList/></ProtectedRoute>}/>
-                <Route path="/products/:productId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
+                <Route path="/products" element={<ProductList/>}/>
+                <Route path="/donations" element={<DonationList/>}/>
+                <Route path="/products/:productId" element={<ProductDetail/>}/>
                 <Route path="/products/:productId/edit" element={<ProtectedRoute><ProductWrite/></ProtectedRoute>}/>
                 <Route path="/posts/:postId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
 
