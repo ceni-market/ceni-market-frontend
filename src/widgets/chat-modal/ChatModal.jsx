@@ -8,6 +8,7 @@ import axios from 'axios';
 import {apiClient} from "../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../store/authStore.js";
 
 function ChatModal({ isChatOpen, onClose, chatRoomData}) {
     //모달 컨트롤 함수들
@@ -130,7 +131,8 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                             />
 
                             {/* 분리된 하단 입력창 */}
-                            <ChatInputForm/>
+                            <ChatInputForm currentChatRoom={currentChatRoom}
+                            />
                         </section>) :
                         (<p className="plz-choose">채팅방을 선택하세요.</p>)
                     }
