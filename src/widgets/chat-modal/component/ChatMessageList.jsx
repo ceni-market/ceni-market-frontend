@@ -1,6 +1,6 @@
 import {useWebsocket} from "../../../WebSocketProvider.jsx";
 import {useEffect, useRef, useState} from "react";
-import {useMutation, useQuery} from "@tanstack/react-query";
+import {useMutation} from "@tanstack/react-query";
 import {apiClient} from "../../../api/apiClient.js";
 // import MessageToast from "./MessageToast.jsx";
 
@@ -45,20 +45,23 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
     //채팅방 스크롤을 가장 아래로 내리기 위해 걸어둔 useRef
     const scrollBottomRef = useRef(null);
     //채팅방 맨 아래로 스크롤 해주는 함수
-    const scrollToBottom = () => {
+    const scrollToBottomSmooth = () => {
+        scrollBottomRef.current.scrollIntoView({behavior: 'smooth'});
+    }
+    const scrollToBottominstant = () => {
         scrollBottomRef.current.scrollIntoView({behavior: 'instant'});
     }
 
     //채팅창 새로 로딩 시 스크롤 맨 아래로 내리는 useEffect
     useEffect(() => {
         updateLastRead();
-        scrollToBottom();
+        scrollToBottominstant();
     }, [chatHistories]);
 
     //새로운 채팅이 들어왔을 때, 현재 스크롤 위치가 맨 아래인지 판별해서 맞으면 새 메시지가 보이게 스크롤을 내리는 useEffect
     useEffect(() => {
         if(isBottom) {
-            scrollToBottom();
+            scrollToBottomSmooth();
         }
         //마지막 조회 시간 업데이트
         reUpdateLastRead();
@@ -70,7 +73,7 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
         //채팅방 DOM 객체를 가져와서 수치를 추출하는 메서드
         const elem = document.getElementById("chat-messages-area");
         const handleScroll = () => {
-            setIsBottom(elem.scrollTop + elem.clientHeight >= elem.scrollHeight - 50);
+            setIsBottom(elem.scrollTop + elem.clientHeight >= elem.scrollHeight - 70);
         }
         elem.addEventListener("scroll", handleScroll);
 
