@@ -61,10 +61,10 @@ function MypageListPage({
                         ))}
                     </div>
 
-                    <button className="mypage-sort-button" type="button">
-                        <span>최신 등록순</span>
-                        <i className="bi bi-chevron-down"/>
-                    </button>
+                    {/*<button className="mypage-sort-button" type="button">*/}
+                    {/*    <span>최신 등록순</span>*/}
+                    {/*    <i className="bi bi-chevron-down"/>*/}
+                    {/*</button>*/}
                 </div>
 
                 <div className="mypage-detail-list">
