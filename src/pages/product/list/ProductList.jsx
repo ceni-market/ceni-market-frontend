@@ -52,7 +52,7 @@ function ProductCard({ product }) {
       <div className="product-list-card-thumb">
         <img src={product.image?.imageUrl || '/assets/images/product-default-img.png'} alt="" />
         <span className="product-list-card-like">
-          <i className="bi bi-heart" />
+          <i className={`bi ${product.likedByMe ? 'bi-heart-fill' : 'bi-heart'}`} />
           <span>{product.likeCount}</span>
         </span>
       </div>

@@ -6,7 +6,7 @@ const DonationCard = ({ item }) => {
             <div className="product-list-card-thumb">
                 <img src={item?.image?.imageUrl|| "/assets/images/product-default-img.png"} alt="" />
                 <span className="product-list-card-like">
-          <i className="bi bi-heart" />
+          <i className={`bi ${item?.likedByMe ? 'bi-heart-fill' : 'bi-heart'}`} />
           <span>{item?.likeCount}</span>
         </span>
             </div>
