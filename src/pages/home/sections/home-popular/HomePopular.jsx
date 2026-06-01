@@ -47,7 +47,7 @@ function HomePopular() {
                 <span className="home-popular-category">{product?.category?.name}</span>
                 <span className="home-popular-meta">
                   <span className="home-popular-price">{product?.price} 원</span>
-                  <span className="home-popular-time">{product.updatedAt?.split('T', 1)}</span>
+                  <span className="home-popular-time">{product.createdAt?.split('T', 1)}</span>
                 </span>
               </div>
             </NavLink>

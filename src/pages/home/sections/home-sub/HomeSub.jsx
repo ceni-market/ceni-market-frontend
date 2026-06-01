@@ -74,7 +74,7 @@ function HomeSub() {
                     <span className="home-sub-recent-badge">나눔</span>
                     <span className="home-sub-recent-name">{product?.title}</span>
                   </span>
-                  <span className="home-sub-recent-time">{product.updatedAt?.split('T', 1)}</span>
+                  <span className="home-sub-recent-time">{product.createdAt?.split('T', 1)}</span>
                 </Link>
               ))}
             </div>

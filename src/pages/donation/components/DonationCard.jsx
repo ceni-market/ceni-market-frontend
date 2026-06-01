@@ -16,7 +16,7 @@ const DonationCard = ({ item }) => {
                 <span className="product-list-card-category">{item?.category?.name}</span>
                 <span className="product-list-card-meta">
           <span className="product-list-card-price">{item?.price} 원</span>
-          <span className="product-list-card-time">{item?.updatedAt?.split('T', 1)}</span>
+          <span className="product-list-card-time">{item?.createdAt?.split('T', 1)}</span>
         </span>
             </div>
         </NavLink>
