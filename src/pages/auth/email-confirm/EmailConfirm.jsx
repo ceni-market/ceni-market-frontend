@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'; // 🎯 useRef 추가
+import {useEffect, useLayoutEffect, useRef, useState} from 'react'; // 🎯 useRef 추가
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
@@ -73,6 +73,57 @@ function EmailConfirm() {
     };
   }, [email, password, name, navigate, mutate]);
 
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
+  const [resendTimer, setResendTimer] = useState(60);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setResendTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setIsResendDisabled(false);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleResendEmail = async () => {
+    if (isResendDisabled) return;
+
+    try {
+      const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
+
+      // purpose는 백엔드와 약속된 값 SIGNUP으로 보냅니다.
+      await axios.post(`${BACKEND_URL}/api/auth/signup/email-request`, {
+        email: email,
+        purpose: "SIGNUP"
+      });
+
+      alert("인증 메일을 재발송했습니다.");
+
+      // 60초 타이머 시작 (클라이언트 측 제어)
+      setIsResendDisabled(true);
+      setResendTimer(60);
+
+      const timer = setInterval(() => {
+        setResendTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setIsResendDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    } catch (err) {
+      console.error("재발송 실패:", err);
+      alert("재발송에 실패했습니다. 잠시 후 다시 시도해주세요.");
+    }
+  };
+
   return (
     <main className="email-confirm-page">
       <AppHeader />
@@ -110,8 +161,22 @@ function EmailConfirm() {
 
             <p className="email-confirm-resend" data-node-id="454:1754" style={{ marginTop: '10px' }}>
               <span>메일을 받지 못하셨나요?</span>
-              <button type="button" style={{ background: 'none', border: 'none', textDecoration: 'underline', color: '#666', cursor: 'pointer' }}>
-                재발송 (59초 후 가능)
+              {/*<button type="button" style={{ background: 'none', border: 'none', textDecoration: 'underline', color: '#666', cursor: 'pointer' }}>*/}
+              {/*  재발송 (59초 후 가능)*/}
+              {/*</button>*/}
+              <button
+                  type="button"
+                  disabled={isResendDisabled}
+                  onClick={handleResendEmail}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    textDecoration: 'underline',
+                    color: isResendDisabled ? '#ccc' : '#666',
+                    cursor: isResendDisabled ? 'not-allowed' : 'pointer',
+                  }}
+              >
+                {isResendDisabled ? `재발송 (${resendTimer}초 후 가능)` : "재발송"}
               </button>
             </p>
           </div>
