@@ -134,6 +134,7 @@ function ProductList() {
             page: currentPage,
             size: PAGE_SIZE,
             sort: currentSort,
+            type: 'SALE',
             ...(selectedCategoryId && { categoryId: selectedCategoryId }),
           },
         });
