@@ -5,8 +5,7 @@ const ChatRoomButton = ({ myChatRoomData, getCurrentChatRoom, selectedChatRoomId
 
     return (
         <>
-            <button className="chat-modal-partner" type="button"
-                    style={selectedChatRoomId === myChatRoomData.chatRoomId ? {backgroundColor:"#f0f5ff"} : {backgroundColor:"white"}}
+            <button className={selectedChatRoomId === myChatRoomData.chatRoomId ? "chat-modal-selected" : "chat-modal-partner"} type="button"
                     onClick={() => {
                         getCurrentChatRoom(myChatRoomData);
                     }
