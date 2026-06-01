@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import {Link, NavLink, useNavigate} from 'react-router-dom';
 import ChatModal from '../chat-modal/ChatModal.jsx';
 import './AppHeader.scss';
 import {useAuthStore} from "../../store/authStore.js";
@@ -46,12 +46,16 @@ const LOGGED_IN_ACTIONS = [
 function AppHeader() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const accessToken = useAuthStore((state) => state.accessToken);
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-
   const isLoggedIn = !!accessToken;
-
   const actions = isLoggedIn ? LOGGED_IN_ACTIONS : NAV_ACTIONS;
+  const nav = useNavigate();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const keyword = formData.get('keyword');
+    nav(`/search?keyword=${encodeURIComponent(keyword)}`);
+  }
 
   return (
     <>
@@ -64,12 +68,13 @@ function AppHeader() {
             <span className="site-header-title">세니마켓</span>
           </Link>
 
-          <form className="site-header-search" role="search">
+          <form className="site-header-search" role="search" onSubmit={handleSearch}>
             <label className="sr-only" htmlFor="site-search">
               상품 검색
             </label>
             <input
               className="site-header-search-input"
+              name="keyword"
               id="site-search"
               type="search"
               placeholder="상품명, 키워드로 검색해보세요"

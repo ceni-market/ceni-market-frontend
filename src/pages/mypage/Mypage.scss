@@ -316,7 +316,11 @@ $mypage-done-bg: #f0f1f3;
 }
 
 .mypage-post-info {
-  padding-top: 13px;
+  padding-top: 10px;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .mypage-post-title {
@@ -325,7 +329,10 @@ $mypage-done-bg: #f0f1f3;
   font-size: 14px;
   font-weight: 500;
   line-height: normal;
+
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mypage-post-meta {
