@@ -9,7 +9,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './ProductDetail.scss';
 import {useEffect, useState} from "react";
-import {useParams} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 import {apiClient} from "../../../api/apiClient.js";
 
 // 상품 이미지가 없을 때는 기본 이미지를 넣어서 Swiper가 비지 않게 처리
@@ -67,6 +67,43 @@ function ProductDetail() {
   const [product, setProduct] = useState(null);
   // 상세 조회 실패 시 화면에 보여줄 메시지
   const [errorMessage, setErrorMessage] = useState('');
+
+  const navigate = useNavigate();
+  const handleDeleteClick = async () => {
+      const confirmed = window.confirm('게시글을 삭제하시겠습니까?');
+
+      if (!confirmed) {
+          return;
+      }
+
+      try {
+          await apiClient.delete(`/listings/${productId}`);
+          alert('게시글이 삭제되었습니다.');
+          navigate('/products');
+      } catch (error) {
+          console.error('게시글 삭제 실패', error);
+          alert('게시글 삭제에 실패했습니다.');
+      }
+  };
+
+  const handleLikeClick = async () => {
+      try {
+          const response = product.likedByMe
+              ? await apiClient.delete(`/listings/${productId}/likes`)
+              : await apiClient.post(`/listings/${productId}/likes`);
+
+          const likeResult = response.data.data;
+
+          setProduct((prevProduct) => ({
+              ...prevProduct,
+              likedByMe: likeResult.liked,
+              likeCount: likeResult.likeCount,
+          }));
+      } catch (error) {
+          console.error('관심 처리 실패',error);
+          alert('관심 처리에 실패했습니다.');
+      }
+  };
 
   // productId가 바뀔 때마다 해당 상품 상세 정보를 조회
   useEffect(() => {
@@ -157,11 +194,15 @@ function ProductDetail() {
 	          <aside className="product-detail-side" data-node-id="456:2002">
 	            {product.owner ? (
 	              <>
-	                <button className="product-detail-chat" type="button">
-	                  <i className="bi bi-pencil-square" aria-hidden="true" />
-	                  <span>수정하기</span>
-	                </button>
-	                <button className="product-detail-like product-detail-delete" type="button">
+                      <button
+                          className="product-detail-edit"
+                          type="button"
+                          onClick={() => navigate(`/products/${productId}/edit`)}
+                      >
+                          <i className="bi bi-pencil-square" aria-hidden="true" />
+                          <span>수정하기</span>
+                      </button>
+	                <button className="product-detail-delete" type="button" onClick={handleDeleteClick}>
 	                  <i className="bi bi-trash" aria-hidden="true" />
 	                  <span>삭제하기</span>
 	                </button>
@@ -172,10 +213,17 @@ function ProductDetail() {
 	                  <i className="bi bi-chat-dots" aria-hidden="true" />
 	                  <span>1:1 채팅으로 문의하기</span>
 	                </button>
-	                <button className="product-detail-like" type="button">
-	                  <i className="bi bi-heart" aria-hidden="true" />
-	                  <span>찜하기</span>
-	                </button>
+                      <button
+                          className="product-detail-like"
+                          type="button"
+                          onClick={handleLikeClick}
+                      >
+                          <i
+                              className={`bi ${product.likedByMe ? 'bi-heart-fill' : 'bi-heart'}`}
+                              aria-hidden="true"
+                          />
+                          <span>{product.likedByMe ? '찜 취소' : '찜하기'}</span>
+                      </button>
 	              </>
 	            )}
 
