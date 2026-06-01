@@ -24,15 +24,15 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
     const [chatHistories, setChatHistories] = useState([{}]);
     const [isVisible, setIsVisible] = useState(false);
     const getCurrentChatRoom = (myChatRoomData) => {
-        if(currentChatRoom === myChatRoomData) {
-            setCurrentChatRoom(null);
-            setIsVisible(false);
-            setChatHistories([]);
-            setSelectedChatRoomId(0);
+        if(selectedChatRoomId === myChatRoomData.chatRoomId) {
+                setCurrentChatRoom(null);
+                setIsVisible(false);
+                setChatHistories([]);
+                setSelectedChatRoomId(0);
         } else {
             setCurrentChatRoom(myChatRoomData);
-            fetchMyChatHistories(myChatRoomData.chatRoomId);
             setIsVisible(true);
+            fetchMyChatHistories(myChatRoomData.chatRoomId);
             setSelectedChatRoomId(myChatRoomData.chatRoomId);
         }
     }
@@ -49,14 +49,10 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
         return response.data.data;
     }
 
-    const {chatRoom, isLoading: myChatRoomsLoading, error: myChatRoomsError} = useQuery({
+    const {refetch: refetchChatRooms, isLoading: myChatRoomsLoading, error: myChatRoomsError} = useQuery({
         queryKey: ['myChatRooms'],
         queryFn: () => fetchMyChatRooms(),
     })
-
-    // useEffect(() => {
-    //     fetchMyChatRooms();
-    // }, []);
 
     //채팅 메시지 기록 데이터 요청
     const fetchMyChatHistories = async (chatRoomId) => {
@@ -78,7 +74,6 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
 
     //선택한 채팅방 색 강조
     const [selectedChatRoomId, setSelectedChatRoomId] = useState(0);
-
 
     return (
         <div className="chat-modal-overlay" onMouseDown={onClose}>
@@ -128,6 +123,7 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                             <ChatMessageList chatHistories={chatHistories}
                                              currentChatRoom={currentChatRoom}
                                              setLastMessageContent={setLastMessageContent}
+                                             refetchChatRooms={refetchChatRooms}
                             />
 
                             {/* 분리된 하단 입력창 */}
