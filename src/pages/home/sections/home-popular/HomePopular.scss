@@ -99,6 +99,10 @@ $popular-like-bg: rgba(17, 24, 39, 0.3);
     justify-content: center;
     font-size: 11px;
     line-height: 1;
+
+    &.bi-heart-fill {
+      color: #ef4444;
+    }
   }
 
   &-like-count {

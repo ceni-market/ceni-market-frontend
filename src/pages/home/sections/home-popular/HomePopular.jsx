@@ -34,7 +34,10 @@ function HomePopular() {
                   alt=""
                 />
                 <span className="home-popular-like">
-                  <i className="home-popular-like-icon bi bi-heart" aria-hidden="true" />
+                  <i
+                    className={`home-popular-like-icon bi ${product?.likedByMe ? 'bi-heart-fill' : 'bi-heart'}`}
+                    aria-hidden="true"
+                  />
                   <span className="home-popular-like-count">{product?.likeCount}</span>
                 </span>
               </div>
