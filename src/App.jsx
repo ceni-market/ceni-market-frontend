@@ -71,10 +71,11 @@ function App() {
                 <Route path="/find-password/verify" element={<EmailConfirm/>}/>
                 <Route path="/find-password/reset" element={<FindPassword step={3}/>}/>
                 <Route path="/find-password/complete" element={<FindPassword step={4}/>}/>
-                <Route path="/products" element={<ProductList/>}/>
-                <Route path="/donations" element={<DonationList/>}/>
-                <Route path="/products/:productId" element={<ProductDetail/>}/>
-                <Route path="/posts/:postId" element={<ProductDetail/>}/>
+                <Route path="/products" element={<ProtectedRoute><ProductList/></ProtectedRoute>}/>
+                <Route path="/donations" element={<ProtectedRoute><DonationList/></ProtectedRoute>}/>
+                <Route path="/products/:productId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
+                <Route path="/products/:productId/edit" element={<ProtectedRoute><ProductWrite/></ProtectedRoute>}/>
+                <Route path="/posts/:postId" element={<ProtectedRoute><ProductDetail/></ProtectedRoute>}/>
 
                 {/* 🔄 2. [추가] 소셜 로그인 성공 시 백엔드가 프론트로 튕겨주는 전용 길목 */}
                 <Route path="/oauth2/redirect" element={<OAuth2RedirectHandler/>}/>

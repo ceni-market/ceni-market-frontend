@@ -238,6 +238,34 @@ $detail-shadow: rgba(12, 12, 13, 0.05);
   color: $detail-primary;
 }
 
+.product-detail-edit,
+.product-detail-delete {
+  width: 216px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+}
+
+.product-detail-edit {
+  border: 1px solid $detail-border;
+  background: $detail-primary;
+  color: #ffffff;
+}
+
+.product-detail-delete {
+  margin-top: 13px;
+  border: 1px solid $detail-primary;
+  background: #ffffff;
+  color: $detail-primary;
+}
+
 .product-detail-safe {
   width: 216px;
   height: 244px;
