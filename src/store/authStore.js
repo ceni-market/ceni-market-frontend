@@ -25,7 +25,11 @@ export const useAuthStore = create((set) => ({
         oppositeStorage.removeItem("user");
 
         // 새로고침 대비: 현재 시간(ms)에 만료 시간(초 * 1000)을 더해 '절대 만료 타임스탬프' 구축
-        const expireTime = Date.now() + (Number(accessTokenExpiresIn));
+        const expiresIn = Number(accessTokenExpiresIn);
+
+        const expireTime = Date.now() + (
+            expiresIn < 100000 ? expiresIn * 1000 : expiresIn
+        );
 
         // 💡 선택된 창고에 백엔드가 준 LoginResponseDTO 토큰 세트 저장
         storage.setItem("accessToken", accessToken);
