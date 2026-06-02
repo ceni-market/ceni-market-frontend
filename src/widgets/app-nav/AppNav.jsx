@@ -3,13 +3,13 @@ import './AppNav.scss';
 
 const NAV_ITEMS = [
   { label: '전체', href: '/products' },
-  { label: 'ITㆍ디지털', href: '/' },
-  { label: '가전제품', href: '/' },
-  { label: '가구ㆍ인테리어', href: '/' },
-  { label: '생활ㆍ주방', href: '/' },
-  { label: '스포츠ㆍ취미', href: '/' },
-  { label: '도서ㆍ음반', href: '/' },
-  { label: '유아ㆍ기타', href: '/' },
+  { label: 'ITㆍ디지털', href: '/products?categoryId=1' },
+  { label: '가전제품', href: '/products?categoryId=2' },
+  { label: '가구ㆍ인테리어', href: '/products?categoryId=3' },
+  { label: '생활ㆍ주방', href: '/products?categoryId=4' },
+  { label: '스포츠ㆍ취미', href: '/products?categoryId=5' },
+  { label: '도서ㆍ음반', href: '/products?categoryId=6' },
+  { label: '유아ㆍ기타', href: '/products?categoryId=7' },
 ];
 
 function AppNav() {
