@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
 import AppFeatures from '../../../widgets/app-features/AppFeatures.jsx';
 import AppFooter from '../../../widgets/app-footer/AppFooter.jsx';
 import AppHeader from '../../../widgets/app-header/AppHeader.jsx';
@@ -12,6 +12,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import './ProductDetail.scss';
+import ChatModal from "../../../widgets/chat-modal/ChatModal.jsx";
 
 // 상품 이미지가 없을 때는 기본 이미지를 넣어서 Swiper가 비지 않게 처리
 function ProductGallery({ product }) {
@@ -66,6 +67,7 @@ function DetailRow({ label, value }) {
 function ProductDetail() {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const authUser = useAuthStore((state) => state.user);     
 
   const accessToken = useAuthStore((state) => state.accessToken);
   // 서버 응답 데이터
@@ -129,6 +131,23 @@ function ProductDetail() {
     fetchProductDetails();
   }, [productId]);
 
+  //해당 게시물에 대한 채팅방 생성 or 입장 코드
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [createdChatRoomId, setCreatedChatRoomId] = useState(0);
+
+  const chatStart = async () => {
+    await apiClient.post(`/chat/create`, {
+      listingId: Number(productId),
+      sellerId: Number(product.seller.id),
+      buyerId: Number(authUser.id)
+    }).then((res) => {
+      setIsChatOpen(true);
+      setCreatedChatRoomId(res.data.data.chatRoomId);
+    }).catch((err) => {
+      console.error(err);
+    })
+  }
+
   if (errorMessage) {
     return (
       <main className="product-detail-page">
@@ -154,6 +173,8 @@ function ProductDetail() {
       </main>
     );
   }
+
+
   return (
     <main className="product-detail-page">
       <AppHeader />
@@ -218,10 +239,15 @@ function ProductDetail() {
               </>
             ) : (
               <>
-                <button className="product-detail-chat" type="button">
+                <button className="product-detail-chat" type="button" onClick={chatStart}>
                   <i className="bi bi-chat-dots" aria-hidden="true" />
                   <span>1:1 채팅으로 문의하기</span>
                 </button>
+                { isChatOpen && (<ChatModal isChatOpen={isChatOpen}
+                                            onClose={() => setIsChatOpen(false)}
+                                            createdChatRoomId={createdChatRoomId}
+                                            setCreatedChatRoomId={setCreatedChatRoomId}
+                />)}
                 <button className="product-detail-like" type="button" onClick={handleLikeClick}>
                   <i
                     className={`bi ${product.likedByMe ? 'bi-heart-fill' : 'bi-heart'}`}
