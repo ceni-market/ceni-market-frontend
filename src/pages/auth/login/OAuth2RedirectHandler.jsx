@@ -23,10 +23,10 @@ function OAuth2RedirectHandler() {
             });
 
             // 3. 창고 저장 완료 후 주소창을 깨끗하게 밀고 메인 화면으로 리다이렉트
-            navigate('/', { replace: true });
+            // navigate('/', { replace: true });
         } else {
             // 만약 토큰이 없다면 실패한 것이므로 로그인 페이지로 빽
-            navigate('/login?error=oauth2_failed', { replace: true });
+            // navigate('/login?error=oauth2_failed', { replace: true });
         }
     }, [searchParams, login, navigate]);
 
