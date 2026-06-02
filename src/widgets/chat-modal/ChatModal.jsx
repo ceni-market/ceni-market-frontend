@@ -8,9 +8,8 @@ import axios from 'axios';
 import {apiClient} from "../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
-import {useAuthStore} from "../../store/authStore.js";
 
-function ChatModal({ isChatOpen, onClose, chatRoomData}) {
+function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomId }) {
     //모달 컨트롤 함수들
     const {position, isDragging, handleHeaderPointerDown} = useModal(isChatOpen);
 
@@ -18,11 +17,12 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
     const navigate = useNavigate();
 
     //내 채팅방 데이터 상태
-    const [myChatRoomDatas, setMyChatRoomDatas] = useState([{}]);
+    const [myChatRoomDatas, setMyChatRoomDatas] = useState([]);
     const [currentChatRoom, setCurrentChatRoom] = useState({});
     //채팅 메시지 States
-    const [chatHistories, setChatHistories] = useState([{}]);
+    const [chatHistories, setChatHistories] = useState([]);
     const [isVisible, setIsVisible] = useState(false);
+
     const getCurrentChatRoom = (myChatRoomData) => {
         if(selectedChatRoomId === myChatRoomData.chatRoomId) {
                 setCurrentChatRoom(null);
@@ -46,13 +46,24 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
             {}
         )
         setMyChatRoomDatas(response.data.data);
-        return response.data.data;
+        return response.data.data ?? [];
     }
 
     const {refetch: refetchChatRooms, isLoading: myChatRoomsLoading, error: myChatRoomsError} = useQuery({
         queryKey: ['myChatRooms'],
         queryFn: () => fetchMyChatRooms(),
     })
+
+    useEffect(() => {
+        if(myChatRoomDatas.length === 0 || !createdChatRoomId) return ;
+        const newChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === createdChatRoomId);
+        if(!newChatRoom) return ;
+        setIsVisible(true);
+        setCurrentChatRoom(newChatRoom);
+        fetchMyChatHistories(createdChatRoomId);
+        setSelectedChatRoomId(createdChatRoomId);
+        setCreatedChatRoomId(null);
+    }, [createdChatRoomId, myChatRoomDatas]);
 
     //채팅 메시지 기록 데이터 요청
     const fetchMyChatHistories = async (chatRoomId) => {
@@ -67,13 +78,34 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
         });
     }
 
+    //선택한 채팅방 색 강조
+    const [selectedChatRoomId, setSelectedChatRoomId] = useState(0);
+
+    //게시글 보기
     const goToListingDetail = () => {
         onClose();
         navigate(`/products/${currentChatRoom.listingInfo?.id}`);
     }
 
-    //선택한 채팅방 색 강조
-    const [selectedChatRoomId, setSelectedChatRoomId] = useState(0);
+    //채팅방 목록에서 우클릭으로 채팅방 나가기 버튼을 만들기 위한 state
+    const [contextMenu, setContextMenu] = useState(null);
+
+    const handleContextMenu = (e, chatRoomId) => {
+        e.preventDefault();
+        setContextMenu({ x: e.clientX, y: e.clientY, chatRoomId });
+    };
+
+    const leaveChatRoom = async (chatRoomId) => {
+        await apiClient.delete(`/chat/${chatRoomId}/delete`);
+        setContextMenu(null);
+        if (selectedChatRoomId === chatRoomId) {
+            setIsVisible(false);
+            setCurrentChatRoom({});
+            setSelectedChatRoomId(0);
+            setChatHistories([]);
+        }
+        refetchChatRooms();
+    };
 
     return (
         <div className="chat-modal-overlay" onMouseDown={onClose}>
@@ -81,6 +113,7 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                 className={`chat-modal${isDragging ? ' chat-modal-dragging' : ''}`}
                 style={{transform: `translate(${position.x}px, ${position.y}px) scale(0.8)`}}
                 onMouseDown={(event) => event.stopPropagation()}
+                onClick={() => setContextMenu(null)}
             >
                 {/* 헤더 (드래그 핸들러 탑재) */}
                 <header className="chat-modal-header" onPointerDown={handleHeaderPointerDown}>
@@ -101,6 +134,7 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                                                                 myChatRoomData={myChatRoomData}
                                                                 getCurrentChatRoom={getCurrentChatRoom}
                                                                 selectedChatRoomId={selectedChatRoomId}
+                                                                onContextMenu={(e) => handleContextMenu(e, myChatRoomData.chatRoomId)}
                                                 />
                                             )
                                         })}
@@ -134,6 +168,15 @@ function ChatModal({ isChatOpen, onClose, chatRoomData}) {
                     }
                 </div>
             </section>
+            {contextMenu && (
+                <ul className="chat-context-menu"
+                    style={{ top: contextMenu.y, left: contextMenu.x }}
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                >
+                    <li onClick={() => leaveChatRoom(contextMenu.chatRoomId)}>채팅방 나가기</li>
+                </ul>
+            )}
         </div>
     );
 }

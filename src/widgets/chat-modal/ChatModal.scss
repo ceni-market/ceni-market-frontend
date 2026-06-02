@@ -406,6 +406,30 @@ $chat-muted: #5f6b7a;
   color: #ccccdd;
 }
 
+.chat-context-menu {
+  position: fixed;
+  z-index: 1100;
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  border: 1px solid $chat-border;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.15);
+
+  li {
+    padding: 10px 18px;
+    color: #e03535;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      background: #fff0f0;
+    }
+  }
+}
+
 .chat-room-badge {
   display: inline-flex;
   align-items: center;
