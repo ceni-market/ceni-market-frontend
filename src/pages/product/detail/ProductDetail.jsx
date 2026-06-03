@@ -141,6 +141,9 @@ function ProductDetail() {
       sellerId: Number(product.seller.id),
       buyerId: Number(authUser.id)
     }).then((res) => {
+      console.log(Number(productId));
+      console.log(Number(product.seller.id));
+      console.log(Number(authUser.id));
       setIsChatOpen(true);
       setCreatedChatRoomId(res.data.data.chatRoomId);
     }).catch((err) => {
