@@ -29,16 +29,17 @@ function WebSocketProvider({children}) {
             }, reconnectDelay: 100000,
             onConnect: () => {
                 console.log("Connected!!");
-                // 연결되면 구독 시작
-                client.subscribe(`/queue/notification/2`, (message) => {
+                // 연결되면 알림 경로 구독 시작
+                client.subscribe(`/queue/notification/${user.id}`, (message) => {
                     const msg = JSON.parse(message.body);
                     console.log(msg.content);
+                    console.log(msg.messagePreview);
                     // setMessages([...messages, msg]);
                 });
-                console.log("Subscribed!!");
+                console.log("Subscribed Notification Websocket!!");
                 //구독 완료하면 메시지 하나 보내기
                 client.publish({
-                    destination: `/publish/notification/2`, headers: {
+                    destination: `/publish/notification/${user.id}`, headers: {
                         Authorization: `Bearer ${accessToken}`,
                     }, // <- 헤더 보내야되면 추가해서 보내야함.
                     body: JSON.stringify({
@@ -52,13 +53,7 @@ function WebSocketProvider({children}) {
         clientRef.current = client;
 
         return () => client.deactivate() // 언마운트 시 연결 종료
-    }, [accessToken])
-
-    // const sendMessage = (message) => {
-    //     client.publish(
-    //         destination: '/topic/notification',
-    //     )
-    // }
+    }, [accessToken, user.id])
 
     return (
         <WebsocketContext.Provider value={clientRef}>
