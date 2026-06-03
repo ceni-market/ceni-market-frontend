@@ -17,7 +17,7 @@ function WebSocketProvider({children}) {
 
     useEffect(() => {
 
-        if (!accessToken) {
+        if (!accessToken && !user) {
             clientRef.current?.deactivate();
             clientRef.current = null;
             return;
@@ -26,7 +26,7 @@ function WebSocketProvider({children}) {
         const client = new Client({
             webSocketFactory: () => new SockJS('http://localhost:8088/connect'), connectHeaders: {
                 Authorization: `Bearer ${accessToken}`,
-            }, reconnectDelay: 100000,
+            }, reconnectDelay: 600000,
             onConnect: () => {
                 console.log("Connected!!");
                 // 연결되면 알림 경로 구독 시작
@@ -34,7 +34,6 @@ function WebSocketProvider({children}) {
                     const msg = JSON.parse(message.body);
                     console.log(msg.content);
                     console.log(msg.messagePreview);
-                    // setMessages([...messages, msg]);
                 });
                 console.log("Subscribed Notification Websocket!!");
                 //구독 완료하면 메시지 하나 보내기
@@ -53,7 +52,7 @@ function WebSocketProvider({children}) {
         clientRef.current = client;
 
         return () => client.deactivate() // 언마운트 시 연결 종료
-    }, [accessToken, user.id])
+    }, [accessToken, user])
 
     return (
         <WebsocketContext.Provider value={clientRef}>
