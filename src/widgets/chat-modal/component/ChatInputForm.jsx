@@ -9,13 +9,13 @@ function ChatInputForm({ currentChatRoom }) {
     const authUser = useAuthStore((state) => state.user);
     const inputRef = useRef(null);
 
-    const publish = (message, contentType) => {
+    const publish = (message, messageType) => {
         clientRef.current.publish({
             destination: `/publish/chat/${currentChatRoom.chatRoomId}`,
             body: JSON.stringify({
                 senderEmail: authUser.email,
                 message: message,
-                contentType: contentType,
+                messageType: messageType,
             })
         });
     };

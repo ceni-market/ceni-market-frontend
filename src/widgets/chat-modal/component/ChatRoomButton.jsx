@@ -11,7 +11,7 @@ const ChatRoomButton = ({ myChatRoomData, getCurrentChatRoom, selectedChatRoomId
                 <strong>{myChatRoomData.contactUserInfo?.name}</strong>
                     {myChatRoomData.lastMessageInfo?.messageType == 'IMAGE' ?
                         (<span>이미지</span>) :
-                        (myChatRoomData.lastMessageInfo?.content.length > 12
+                        (myChatRoomData.lastMessageInfo?.content?.length > 12
                         ? (<span>{myChatRoomData.lastMessageInfo?.content.substring(0,12) + "..."}</span>)
                         : (<span>{myChatRoomData.lastMessageInfo?.content}</span>))
                     }
