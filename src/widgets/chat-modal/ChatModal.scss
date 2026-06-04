@@ -175,6 +175,24 @@ $chat-muted: #5f6b7a;
   background: #eeeeee;
 }
 
+.chat-modal-profile-default {
+  width: 60px;
+  height: 60px;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #eeeeee;
+  color: #9a9a9a;
+  box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.25);
+
+  i {
+    font-size: 36px;
+    line-height: 1;
+  }
+}
+
 .chat-modal-partner-copy {
   min-width: 0;
   margin-left: 11px;
@@ -245,6 +263,18 @@ $chat-muted: #5f6b7a;
   font-weight: 400;
   line-height: 30px;
   white-space: nowrap;
+}
+
+.chat-modal-transaction {
+  border-color: $chat-primary;
+  background: $chat-primary;
+  color: #ffffff;
+
+  &:disabled {
+    border-color: #aab7c7;
+    background: #aab7c7;
+    cursor: default;
+  }
 }
 
 .chat-modal-messages {

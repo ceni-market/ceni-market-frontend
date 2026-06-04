@@ -8,6 +8,7 @@ import axios from 'axios';
 import {apiClient} from "../../api/apiClient.js";
 import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
+import {useAuthStore} from "../../store/authStore.js";
 
 function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomId }) {
     //모달 컨트롤 함수들
@@ -15,10 +16,14 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
 
     //네비게이트
     const navigate = useNavigate();
+    const authUser = useAuthStore((state) => state.user);
 
     //내 채팅방 데이터 상태
     const [myChatRoomDatas, setMyChatRoomDatas] = useState([]);
     const [currentChatRoom, setCurrentChatRoom] = useState({});
+    const [isSeller, setIsSeller] = useState(null);
+    const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
+    const [isTransactionSubmitting, setIsTransactionSubmitting] = useState(false);
     //채팅 메시지 States
     const [chatHistories, setChatHistories] = useState([]);
     const [isVisible, setIsVisible] = useState(false);
@@ -122,6 +127,55 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
         navigate(`/products/${currentChatRoom.listingInfo?.id}`);
     }
 
+    useEffect(() => {
+        const listingId = currentChatRoom?.listingInfo?.id;
+        let isCancelled = false;
+
+        if (!listingId || !authUser?.id) {
+            setIsSeller(null);
+            return;
+        }
+
+        setIsSeller(null);
+        setIsTransactionCompleted(false);
+
+        apiClient.get(`/listings/${listingId}`)
+            .then((response) => {
+                if (!isCancelled) {
+                    setIsSeller(Number(response.data.data?.seller?.id) === Number(authUser.id));
+                }
+            })
+            .catch((error) => {
+                console.error("상품 판매자 정보 조회 실패", error);
+                if (!isCancelled) {
+                    setIsSeller(false);
+                }
+            });
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [currentChatRoom?.chatRoomId, currentChatRoom?.listingInfo?.id, authUser?.id]);
+
+    const completeTransaction = async () => {
+        if (!currentChatRoom?.chatRoomId || isTransactionSubmitting) return;
+
+        setIsTransactionSubmitting(true);
+
+        try {
+            await apiClient.post("/transactions", {
+                chatRoomId: currentChatRoom.chatRoomId,
+            });
+            setIsTransactionCompleted(true);
+            alert("거래가 완료되었습니다.");
+        } catch (error) {
+            console.error("거래 완료 처리 실패", error);
+            alert(error.response?.data?.message || "거래 완료 처리에 실패했습니다.");
+        } finally {
+            setIsTransactionSubmitting(false);
+        }
+    };
+
     //채팅방 목록에서 우클릭으로 채팅방 나가기 버튼을 만들기 위한 state
     const [contextMenu, setContextMenu] = useState(null);
 
@@ -182,9 +236,24 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
                                     <strong>{currentChatRoom.contactUserInfo?.name}</strong>
                                     <span>{currentChatRoom.listingInfo?.title}</span>
                                 </div>
-                                <button className="chat-modal-detail" type="button" onClick={goToListingDetail}>
-                                    상품 상세보기 &gt;
-                                </button>
+                                {isSeller === true ? (
+                                    <button
+                                        className="chat-modal-detail chat-modal-transaction"
+                                        type="button"
+                                        onClick={completeTransaction}
+                                        disabled={isTransactionSubmitting || isTransactionCompleted}
+                                    >
+                                        {isTransactionCompleted
+                                            ? "거래 완료됨"
+                                            : isTransactionSubmitting
+                                                ? "처리 중..."
+                                                : "거래 완료하기"}
+                                    </button>
+                                ) : isSeller === false ? (
+                                    <button className="chat-modal-detail" type="button" onClick={goToListingDetail}>
+                                        상품 상세보기 &gt;
+                                    </button>
+                                ) : null}
                             </header>
 
                             {/* 분리된 메시지 리스트 */}
