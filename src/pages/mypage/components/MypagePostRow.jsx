@@ -1,14 +1,16 @@
 import { NavLink } from 'react-router-dom';
 
 function MypagePostRow({ item, wide = false }) {
+  const productId = item.listingId ?? item.id;
+
   return (
     <article className={`mypage-post-item${wide ? ' mypage-post-item-wide' : ''}`}>
-      <NavLink className="mypage-post-thumb" to={`/products/${item.id}`}>
+      <NavLink className="mypage-post-thumb" to={`/products/${productId}`}>
         <img src={item.image?.imageUrl|| "/assets/images/product-default-img.png"} alt="" />
       </NavLink>
 
       <div className="mypage-post-info">
-        <NavLink className="mypage-post-title" to={`/products/${item.id}`}>
+        <NavLink className="mypage-post-title" to={`/products/${productId}`}>
           {item.title}
         </NavLink>
         <div className="mypage-post-meta">
