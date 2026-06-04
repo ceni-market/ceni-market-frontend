@@ -1,12 +1,16 @@
-import {useState} from "react";
-
 const ChatRoomButton = ({ myChatRoomData, getCurrentChatRoom, selectedChatRoomId, onContextMenu }) => {
 
     return (
         <>
             <button className={selectedChatRoomId === myChatRoomData.chatRoomId ? "chat-modal-selected" : "chat-modal-partner"} type="button"
                     onClick={() => getCurrentChatRoom(myChatRoomData)} onContextMenu={onContextMenu}>
-                <img src={myChatRoomData.contactUserInfo?.profileImageUrl} alt=""/>
+                {myChatRoomData.contactUserInfo?.profileImageUrl ? (
+                    <img src={myChatRoomData.contactUserInfo.profileImageUrl} alt=""/>
+                ) : (
+                    <span className="chat-modal-profile-default">
+                        <i className="bi bi-person-fill" />
+                    </span>
+                )}
                 <span className="chat-modal-partner-copy">
                 <strong>{myChatRoomData.contactUserInfo?.name}</strong>
                     {myChatRoomData.lastMessageInfo?.messageType == 'IMAGE' ?
