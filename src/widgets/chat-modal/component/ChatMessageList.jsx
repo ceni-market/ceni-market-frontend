@@ -11,20 +11,27 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
     const [isBottom, setIsBottom] = useState(true);
 
     //Context에 저장한 웹소켓 가져오기
-    const clientRef = useWebsocket();
+    const { clientRef, connected } = useWebsocket();
+
 
     useEffect(() => {
         setMessages([]);
-        if(clientRef?.current?.connected) {
-            const subscribe = clientRef.current.subscribe(`/queue/chat/${currentChatRoom.chatRoomId}`, (frame) => {
+
+        if (!connected || !clientRef?.current || !currentChatRoom?.chatRoomId) {
+            return;
+        }
+
+        const subscription = clientRef.current.subscribe(
+            `/queue/chat/${currentChatRoom.chatRoomId}`,
+            (frame) => {
                 const msg = JSON.parse(frame.body);
                 setLastMessageContent(msg);
-                setMessages(prev => [...prev, msg]);
-            });
+                setMessages((prev) => [...prev, msg]);
+            }
+        );
 
-            return () => subscribe.unsubscribe();
-        }
-    }, [currentChatRoom]);
+        return () => subscription.unsubscribe();
+    }, [connected, currentChatRoom?.chatRoomId]);
 
     //마지막 조회시간 업데이트 요청
     const updateLastRead = async () => {

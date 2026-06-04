@@ -11,6 +11,7 @@ const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
 export const useWebsocket = () => useContext(WebsocketContext);
 
 function WebSocketProvider({children}) {
+    const [connected, setConnected] = useState(false);
     const accessToken = useAuthStore((state) => state.accessToken);
     const user = useAuthStore((state) => state.user);
     const [messages, setMessages] = useState([]);
@@ -19,17 +20,19 @@ function WebSocketProvider({children}) {
 
     useEffect(() => {
 
-        if (!accessToken && !user) {
+        if (!accessToken || !user) {
             clientRef.current?.deactivate();
             clientRef.current = null;
+            setConnected(false);
             return;
         }
 
         const client = new Client({
             webSocketFactory: () => new SockJS(`${BACKEND_URL}/connect`), connectHeaders: {
                 Authorization: `Bearer ${accessToken}`,
-            }, reconnectDelay: 600000,
+            }, reconnectDelay: 5000,
             onConnect: () => {
+                setConnected(true);
                 console.log("Connected!!");
                 // 연결되면 알림 경로 구독 시작
                 client.subscribe(`/queue/notification/${user.id}`, (message) => {
@@ -48,6 +51,17 @@ function WebSocketProvider({children}) {
                     }),
                 })
             },
+            onDisconnect: () => {
+                setConnected(false);
+            },
+
+            onWebSocketClose: () => {
+                setConnected(false);
+            },
+
+            onStompError: () => {
+                setConnected(false);
+            },
         })
 
         client.activate();
@@ -57,7 +71,7 @@ function WebSocketProvider({children}) {
     }, [accessToken, user])
 
     return (
-        <WebsocketContext.Provider value={clientRef}>
+        <WebsocketContext.Provider value={{ clientRef, connected }}>
             {children}
         </WebsocketContext.Provider>
     );
