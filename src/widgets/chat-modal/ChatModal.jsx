@@ -24,7 +24,13 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
     const [isVisible, setIsVisible] = useState(false);
 
     const getCurrentChatRoom = (myChatRoomData) => {
+        console.log("[CHAT:ROOM] select room", {
+            selectedChatRoomId,
+            clickedChatRoomId: myChatRoomData?.chatRoomId,
+            room: myChatRoomData,
+        });
         if(selectedChatRoomId === myChatRoomData.chatRoomId) {
+                console.log("[CHAT:ROOM] close selected room", myChatRoomData.chatRoomId);
                 setCurrentChatRoom(null);
                 setIsVisible(false);
                 setChatHistories([]);
@@ -41,10 +47,15 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
 
     //채팅방 데이터 요청
     const fetchMyChatRooms = async () => {
+        console.log("[CHAT:ROOMS] fetch request");
         const response = await apiClient.get(
             `/chat/mychat`,
             {}
         )
+        console.log("[CHAT:ROOMS] fetch response", {
+            count: response.data.data?.length,
+            data: response.data.data,
+        });
         setMyChatRoomDatas(response.data.data);
         return response.data.data ?? [];
     }
@@ -55,8 +66,18 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
     })
 
     useEffect(() => {
+        console.log("[CHAT:ROOM] created room effect", {
+            createdChatRoomId,
+            roomCount: myChatRoomDatas.length,
+            rooms: myChatRoomDatas,
+        });
         if(myChatRoomDatas.length === 0 || !createdChatRoomId) return ;
         const newChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === createdChatRoomId);
+        console.log("[CHAT:ROOM] created room lookup", {
+            createdChatRoomId,
+            found: !!newChatRoom,
+            newChatRoom,
+        });
         if(!newChatRoom) return ;
         setIsVisible(true);
         setCurrentChatRoom(newChatRoom);
@@ -67,12 +88,26 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
 
     //채팅 메시지 기록 데이터 요청
     const fetchMyChatHistories = async (chatRoomId) => {
+        console.log("[CHAT:HISTORY] fetch request", {
+            chatRoomId,
+        });
         await apiClient.get(
             `/chat/history/${chatRoomId}`,
             {}
         ).then(res => {
+            console.log("[CHAT:HISTORY] fetch response", {
+                chatRoomId,
+                count: res.data.data?.length,
+                data: res.data.data,
+            });
             setChatHistories(res.data.data);
         }).catch(error => {
+            console.log("[CHAT:HISTORY] fetch error", {
+                chatRoomId,
+                status: error.response?.status,
+                data: error.response?.data,
+                message: error.message,
+            });
             console.log(error);
             console.log("잘못된 채팅방 ID입니다.");
         });
