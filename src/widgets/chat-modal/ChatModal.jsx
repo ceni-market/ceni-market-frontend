@@ -96,7 +96,7 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
     };
 
     const leaveChatRoom = async (chatRoomId) => {
-        await apiClient.delete(`/chat/${chatRoomId}/delete`);
+        await apiClient.delete(`/chat/${chatRoomId}`);
         setContextMenu(null);
         if (selectedChatRoomId === chatRoomId) {
             setIsVisible(false);
