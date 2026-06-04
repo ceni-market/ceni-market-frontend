@@ -6,8 +6,6 @@ import {Navigate} from "react-router-dom";
 
 const WebsocketContext = createContext(null);
 
-const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
-
 export const useWebsocket = () => useContext(WebsocketContext);
 
 function WebSocketProvider({children}) {
@@ -26,7 +24,7 @@ function WebSocketProvider({children}) {
         }
 
         const client = new Client({
-            webSocketFactory: () => new SockJS(`${BACKEND_URL}/connect`), connectHeaders: {
+            webSocketFactory: () => new SockJS(`https://www.ceni-market.site/connect`), connectHeaders: {
                 Authorization: `Bearer ${accessToken}`,
             }, reconnectDelay: 600000,
             onConnect: () => {
