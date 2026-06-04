@@ -136,7 +136,7 @@ function ProductDetail() {
   const [createdChatRoomId, setCreatedChatRoomId] = useState(0);
 
   const chatStart = async () => {
-    await apiClient.post(`/chat/create`, {
+    await apiClient.post(`/chat`, {
       listingId: Number(productId),
       sellerId: Number(product.seller.id),
       buyerId: Number(authUser.id)
