@@ -5,7 +5,7 @@ import {useRef} from "react";
 
 function ChatInputForm({ currentChatRoom }) {
 
-    const clientRef = useWebsocket();
+    const { clientRef, connected } = useWebsocket();
     const authUser = useAuthStore((state) => state.user);
     const inputRef = useRef(null);
 
@@ -22,7 +22,7 @@ function ChatInputForm({ currentChatRoom }) {
 
     const sendMessage = () => {
         const msg = inputRef.current.value.trim();
-        if (msg.length >= 1 && clientRef?.current?.connected) {
+        if (msg.length >= 1 && connected && clientRef?.current?.connected) {
             publish(msg, "TEXT");
         }
         inputRef.current.value = "";
@@ -30,7 +30,7 @@ function ChatInputForm({ currentChatRoom }) {
 
     const sendImage = async (e) => {
         const file = e.target.files[0];
-        if (file || clientRef?.current?.connected) {
+        if (file && connected && clientRef?.current?.connected) {
             const formData = new FormData();
             formData.append("files", file);
 
