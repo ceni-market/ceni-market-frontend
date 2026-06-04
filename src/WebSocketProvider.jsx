@@ -19,8 +19,18 @@ function WebSocketProvider({children}) {
     const clientRef = useRef(null)
 
     useEffect(() => {
+        console.log("[WS] effect run", {
+            hasAccessToken: !!accessToken,
+            userId: user?.id,
+            userEmail: user?.email,
+            backendUrl: BACKEND_URL,
+        });
 
         if (!accessToken || !user) {
+            console.log("[WS] skip connect: missing auth data", {
+                hasAccessToken: !!accessToken,
+                hasUser: !!user,
+            });
             clientRef.current?.deactivate();
             clientRef.current = null;
             setConnected(false);
@@ -31,16 +41,27 @@ function WebSocketProvider({children}) {
             webSocketFactory: () => new SockJS(`${BACKEND_URL}/connect`), connectHeaders: {
                 Authorization: `Bearer ${accessToken}`,
             }, reconnectDelay: 5000,
+            debug: (message) => {
+                console.log("[WS:STOMP]", message);
+            },
+            onWebSocketError: (event) => {
+                console.log("[WS] websocket error", event);
+            },
             onConnect: () => {
                 setConnected(true);
-                console.log("Connected!!");
+                console.log("[WS] connected", {
+                    connected: client.connected,
+                    userId: user.id,
+                    notificationDestination: `/queue/notification/${user.id}`,
+                });
                 // 연결되면 알림 경로 구독 시작
                 client.subscribe(`/queue/notification/${user.id}`, (message) => {
                     const msg = JSON.parse(message.body);
+                    console.log("[WS] notification received", msg);
                     console.log(msg.content);
                     console.log(msg.messagePreview);
                 });
-                console.log("Subscribed Notification Websocket!!");
+                console.log("[WS] subscribed notification", `/queue/notification/${user.id}`);
                 //구독 완료하면 메시지 하나 보내기
                 client.publish({
                     destination: `/publish/notification/${user.id}`, headers: {
@@ -52,18 +73,32 @@ function WebSocketProvider({children}) {
                 })
             },
             onDisconnect: () => {
+                console.log("[WS] disconnected");
                 setConnected(false);
             },
 
-            onWebSocketClose: () => {
+            onWebSocketClose: (event) => {
+                console.log("[WS] websocket closed", {
+                    code: event?.code,
+                    reason: event?.reason,
+                    wasClean: event?.wasClean,
+                });
                 setConnected(false);
             },
 
-            onStompError: () => {
+            onStompError: (frame) => {
+                console.log("[WS] stomp error", {
+                    headers: frame?.headers,
+                    body: frame?.body,
+                });
                 setConnected(false);
             },
         })
 
+        console.log("[WS] activate client", {
+            connectUrl: `${BACKEND_URL}/connect`,
+            reconnectDelay: 5000,
+        });
         client.activate();
         clientRef.current = client;
 

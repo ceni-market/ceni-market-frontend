@@ -15,30 +15,56 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
 
 
     useEffect(() => {
+        console.log("[CHAT:SUB] effect run", {
+            connected,
+            clientExists: !!clientRef?.current,
+            clientConnected: clientRef?.current?.connected,
+            chatRoomId: currentChatRoom?.chatRoomId,
+            currentChatRoom,
+        });
         setMessages([]);
 
         if (!connected || !clientRef?.current || !currentChatRoom?.chatRoomId) {
+            console.log("[CHAT:SUB] skip subscribe", {
+                connected,
+                clientExists: !!clientRef?.current,
+                clientConnected: clientRef?.current?.connected,
+                chatRoomId: currentChatRoom?.chatRoomId,
+            });
             return;
         }
 
+        console.log("[CHAT:SUB] subscribe", `/queue/chat/${currentChatRoom.chatRoomId}`);
         const subscription = clientRef.current.subscribe(
             `/queue/chat/${currentChatRoom.chatRoomId}`,
             (frame) => {
                 const msg = JSON.parse(frame.body);
+                console.log("[CHAT:SUB] message received", {
+                    destination: `/queue/chat/${currentChatRoom.chatRoomId}`,
+                    rawBody: frame.body,
+                    parsed: msg,
+                });
                 setLastMessageContent(msg);
                 setMessages((prev) => [...prev, msg]);
             }
         );
 
-        return () => subscription.unsubscribe();
+        return () => {
+            console.log("[CHAT:SUB] unsubscribe", `/queue/chat/${currentChatRoom.chatRoomId}`);
+            subscription.unsubscribe();
+        };
     }, [connected, currentChatRoom?.chatRoomId]);
 
     //마지막 조회시간 업데이트 요청
     const updateLastRead = async () => {
+        console.log("[CHAT:READ] update request", {
+            chatRoomId: currentChatRoom?.chatRoomId,
+        });
         const response = await apiClient.get(
             `/chat/${currentChatRoom.chatRoomId}/readAt`,
             {}
         )
+        console.log("[CHAT:READ] update response", response.data);
     }
 
     const { mutate: reUpdateLastRead, isLoading: updateLastReadLoading, error: updateLastReadError, status: success} = useMutation({
@@ -61,12 +87,22 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
 
     //채팅창 새로 로딩 시 스크롤 맨 아래로 내리는 useEffect
     useEffect(() => {
+        console.log("[CHAT:HISTORY] histories changed", {
+            chatRoomId: currentChatRoom?.chatRoomId,
+            historyCount: chatHistories?.length,
+            histories: chatHistories,
+        });
         updateLastRead();
         scrollToBottominstant();
     }, [chatHistories]);
 
     //새로운 채팅이 들어왔을 때, 현재 스크롤 위치가 맨 아래인지 판별해서 맞으면 새 메시지가 보이게 스크롤을 내리는 useEffect
     useEffect(() => {
+        console.log("[CHAT:LOCAL] websocket messages changed", {
+            chatRoomId: currentChatRoom?.chatRoomId,
+            messageCount: messages.length,
+            messages,
+        });
         if(isBottom) {
             scrollToBottomSmooth();
         }
