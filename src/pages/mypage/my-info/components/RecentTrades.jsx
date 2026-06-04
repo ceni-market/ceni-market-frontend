@@ -3,7 +3,7 @@ import {NavLink} from "react-router-dom";
 function TradeItem({ trade }) {
     return (
         <article className="mypage-trade-item">
-            <img src={trade.image.imageUrl} alt="" />
+            <img src={trade.image?.imageUrl || "/assets/images/product-default-img.png"} alt="" />
             <div className="mypage-trade-info">
                 <div className="mypage-trade-head">
                     <strong>{trade.title}</strong>

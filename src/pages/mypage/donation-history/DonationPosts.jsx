@@ -10,15 +10,26 @@ function DonationPosts() {
     const [page, setPage] = useState(0);
     const size = 10;
 
-    const fetchMyDonations = async (role, type) => {
+    const getRoleByTab = (tab) => {
+        switch (tab) {
+            case '나눔한 글':
+                return 'SELLER';
+            case '나눔받은 글':
+                return 'BUYER';
+            default:
+                return null;
+        }
+    };
+
+    const fetchMyDonations = async (role) => {
         const response = await apiClient.get(
             `/mypage/transactions`,
             {
                 params: {
                     page,
                     size,
+                    type: 'GIVEAWAY',
                     ...(role && {role}),
-                    ...(type && {type}),
                 }
             }
         )
@@ -27,29 +38,14 @@ function DonationPosts() {
     }
 
     const {data, isLoading, error} = useQuery({
-        queryKey: ['donations'],
-        queryFn: () => fetchMyDonations(null, null),
+        queryKey: ['donations', selectedTab, page, size],
+        queryFn: () => fetchMyDonations(getRoleByTab(selectedTab)),
     })
 
     const handleTabChange = (tab) => {
 
         setSelectedTab(tab);
         setPage(0);
-
-        let role = null;
-        let type = 'GIVEAWAY';
-
-        switch (tab) {
-            case '전체':
-                break;
-            case '나눔한 글':
-                role = 'SELLER';
-                break;
-            case '나눔받은 글':
-                role = 'BUYER';
-                break;
-        }
-        fetchMyDonations(role, type)
     }
 
     return (
