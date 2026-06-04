@@ -10,6 +10,17 @@ function TradeHistory() {
     const [page, setPage] = useState(0);
     const size = 10;
 
+    const getRoleByTab = (tab) => {
+        switch (tab) {
+            case '판매 완료':
+                return 'SELLER';
+            case '구매 완료':
+                return 'BUYER';
+            default:
+                return null;
+        }
+    };
+
     const fetchMyTrades = async (role) => {
         const response = await apiClient.get(
             `/mypage/transactions`,
@@ -17,6 +28,7 @@ function TradeHistory() {
                 params: {
                     page,
                     size,
+                    type: 'SALE',
                     ...(role && {role}),
                 }
             }
@@ -27,27 +39,13 @@ function TradeHistory() {
 
     const {data, isLoading, error} = useQuery({
         queryKey: ['trades', selectedTab, page, size],
-        queryFn: () => fetchMyTrades(null, null),
+        queryFn: () => fetchMyTrades(getRoleByTab(selectedTab)),
     })
 
     const handleTabChange = (tab) => {
 
         setSelectedTab(tab);
         setPage(0);
-
-        let role = null;
-
-        switch (tab) {
-            case '전체':
-                break;
-            case '판매 완료':
-                role = 'SELLER';
-                break;
-            case '구매 완료':
-                role = 'BUYER';
-                break;
-        }
-        fetchMyTrades(role)
     }
 
     return (
