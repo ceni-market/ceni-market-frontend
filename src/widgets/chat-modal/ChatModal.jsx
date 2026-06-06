@@ -10,13 +10,21 @@ import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../store/authStore.js";
 
-function ChatModal({ isChatOpen,
+function ChatModal({
+                       isChatOpen,
                        onClose,
                        createdChatRoomId,
                        setCreatedChatRoomId,
                        notification,
                        notiChatRoomId,
-                       setNotiChatRoomId}) {
+                       setNotiChatRoomId,
+                       setNotiBadge
+                   }) {
+
+    useEffect(() => {
+        setNotiBadge?.(null);
+    }, [isChatOpen]);
+
     //모달 컨트롤 함수들
     const {position, isDragging, handleHeaderPointerDown} = useModal(isChatOpen);
 
@@ -26,6 +34,7 @@ function ChatModal({ isChatOpen,
 
     //내 채팅방 데이터 상태
     const [myChatRoomDatas, setMyChatRoomDatas] = useState([]);
+    const [searchKeyword, setSearchKeyword] = useState('');
     const [currentChatRoom, setCurrentChatRoom] = useState({});
     const [isSeller, setIsSeller] = useState(null);
     const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
@@ -41,13 +50,13 @@ function ChatModal({ isChatOpen,
             room: myChatRoomData,
         }); //로그
 
-        if(selectedChatRoomId === myChatRoomData.chatRoomId) {
-                console.log("[CHAT:ROOM] close selected room", myChatRoomData.chatRoomId); //로그
+        if (selectedChatRoomId === myChatRoomData.chatRoomId) {
+            console.log("[CHAT:ROOM] close selected room", myChatRoomData.chatRoomId); //로그
 
-                setCurrentChatRoom(null);
-                setIsVisible(false);
-                setChatHistories([]);
-                setSelectedChatRoomId(0);
+            setCurrentChatRoom(null);
+            setIsVisible(false);
+            setChatHistories([]);
+            setSelectedChatRoomId(0);
         } else {
             setCurrentChatRoom(myChatRoomData);
             setIsVisible(true);
@@ -58,6 +67,7 @@ function ChatModal({ isChatOpen,
 
     //현재 스크롤이 맨 아래에 있는지 판별한 값을 저장하는 State. ChatMessageList, ChatInputForm에서 둘  사용
     const [isBottom, setIsBottom] = useState(true);
+
     const [lastMessageContent, setLastMessageContent] = useState("");
 
     //채팅방 데이터 요청
@@ -96,7 +106,7 @@ function ChatModal({ isChatOpen,
             rooms: myChatRoomDatas,
         }); //로그
 
-        if(myChatRoomDatas.length === 0 || !createdChatRoomId) return ;
+        if (myChatRoomDatas.length === 0 || !createdChatRoomId) return;
         const newChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === createdChatRoomId);
 
         console.log("[CHAT:ROOM] created room lookup", {
@@ -105,7 +115,7 @@ function ChatModal({ isChatOpen,
             newChatRoom,
         }); //로그
 
-        if(!newChatRoom) return ;
+        if (!newChatRoom) return;
         setIsVisible(true);
         setCurrentChatRoom(newChatRoom);
         fetchMyChatHistories(createdChatRoomId);
@@ -155,11 +165,11 @@ function ChatModal({ isChatOpen,
     useEffect(() => {
         const targetChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === Number(notiChatRoomId));
         if (!targetChatRoom) return;
-            setIsVisible(true);
-            setCurrentChatRoom(targetChatRoom);
-            fetchMyChatHistories(targetChatRoom.chatRoomId);
-            setSelectedChatRoomId(targetChatRoom.chatRoomId);
-            setNotiChatRoomId(null);
+        setIsVisible(true);
+        setCurrentChatRoom(targetChatRoom);
+        fetchMyChatHistories(targetChatRoom.chatRoomId);
+        setSelectedChatRoomId(targetChatRoom.chatRoomId);
+        setNotiChatRoomId(null);
     }, [notiChatRoomId, myChatRoomDatas]);
 
     //게시글 보기
@@ -222,7 +232,7 @@ function ChatModal({ isChatOpen,
 
     const handleContextMenu = (e, chatRoomId) => {
         e.preventDefault();
-        setContextMenu({ x: e.clientX, y: e.clientY, chatRoomId });
+        setContextMenu({x: e.clientX, y: e.clientY, chatRoomId});
     };
 
     //채팅방 나가기
@@ -251,27 +261,40 @@ function ChatModal({ isChatOpen,
                     <h2>채팅</h2>
                     <label className="chat-modal-search" htmlFor="chat-room-search">
                         <i className="bi bi-search" aria-hidden="true"/>
-                        <input id="chat-room-search" type="search" placeholder="대화방 또는 상대방을 검색하세요"/>
+                        <input
+                            id="chat-room-search"
+                            type="search"
+                            placeholder="대화방 또는 상대방을 검색하세요"
+                            value={searchKeyword}
+                            onChange={(e) => setSearchKeyword(e.target.value)}
+                        />
                     </label>
                 </header>
 
                 <div className="chat-modal-body">
-                            {/* 좌측 사이드바 */}
-                            <aside className="chat-modal-list">
-                                        {myChatRoomDatas.map((myChatRoomData) => {
-                                            return (
-                                                <ChatRoomButton
-                                                                key={myChatRoomData.chatRoomId}
-                                                                myChatRoomData={myChatRoomData}
-                                                                getCurrentChatRoom={getCurrentChatRoom}
-                                                                selectedChatRoomId={selectedChatRoomId}
-                                                                onContextMenu={(e) => handleContextMenu(e, myChatRoomData.chatRoomId)}
-                                                />
-                                            )
-                                        })}
-                            </aside>
+                    {/* 좌측 사이드바 */}
+                    <aside className="chat-modal-list">
+                        {myChatRoomDatas.filter((myChatRoomData) => {
+                            if (!searchKeyword) return true;
+                            const keyword = searchKeyword.toLowerCase();
+                            return (
+                                myChatRoomData.contactUserInfo?.name?.toLowerCase().includes(keyword) ||
+                                myChatRoomData.listingInfo?.title?.toLowerCase().includes(keyword)
+                            );
+                        }).map((myChatRoomData) => {
+                                return (
+                                    <ChatRoomButton
+                                        key={myChatRoomData.chatRoomId}
+                                        myChatRoomData={myChatRoomData}
+                                        getCurrentChatRoom={getCurrentChatRoom}
+                                        selectedChatRoomId={selectedChatRoomId}
+                                        onContextMenu={(e) => handleContextMenu(e, myChatRoomData.chatRoomId)}
+                                    />
+                                )
+                            })}
+                    </aside>
                     {/* 우측 채팅방 메인 */}
-                    { isVisible ?
+                    {isVisible ?
                         (<section className="chat-modal-room">
                             <header className="chat-modal-room-header">
                                 <div className="chat-modal-room-title">
@@ -310,7 +333,6 @@ function ChatModal({ isChatOpen,
 
                             {/* 분리된 하단 입력창 */}
                             <ChatInputForm currentChatRoom={currentChatRoom}
-                                           isBottom={isBottom}
                                            setIsBottom={setIsBottom}
                             />
                         </section>) :
@@ -320,7 +342,7 @@ function ChatModal({ isChatOpen,
             </section>
             {contextMenu && (
                 <ul className="chat-context-menu"
-                    style={{ top: contextMenu.y, left: contextMenu.x }}
+                    style={{top: contextMenu.y, left: contextMenu.x}}
                     onClick={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                 >

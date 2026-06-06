@@ -46,6 +46,7 @@ const LOGGED_IN_ACTIONS = [
 
 function AppHeader() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [notiBadge, setNotiBadge] = useState(false);
   const accessToken = useAuthStore((state) => state.accessToken);
   const isLoggedIn = !!accessToken;
   const actions = isLoggedIn ? LOGGED_IN_ACTIONS : NAV_ACTIONS;
@@ -59,6 +60,7 @@ function AppHeader() {
   useEffect(() => {
     if(!notification) return;
     if(!document.querySelector('.chat-modal') || document.hidden) {
+      setNotiBadge(true);
       if(clientRef.current?.connected && Notification.permission === "granted") {
         const noti = new Notification('새로운 채팅이 도착했습니다.', {
           body: notification.messageType === 'IMAGE' ? '[ 이미지 ]' : notification?.messagePreview,
@@ -121,6 +123,7 @@ function AppHeader() {
                 >
                   <i className={`site-header-button-icon bi ${action.icon}`} aria-hidden="true" />
                   <span className="site-header-button-label">{action.label}</span>
+                  <span className="site-header-new-chat-badge" style={{visibility: notiBadge ? "visible" : "hidden" }}></span>
                 </button>
               ) : (
                 <NavLink className={action.className} to={action.href} key={action.label}>
@@ -137,7 +140,8 @@ function AppHeader() {
                                 onClose={() => setIsChatOpen(false)}
                                 notification={notification}
                                 notiChatRoomId={notiChatRoomId}
-                                setNotiChatRoomId={setNotiChatRoomId} />}
+                                setNotiChatRoomId={setNotiChatRoomId}
+                                setNotiBadge={setNotiBadge}/>}
     </>
   );
 }
