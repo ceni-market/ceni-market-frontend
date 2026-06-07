@@ -149,6 +149,7 @@ $header-surface: #ffffff;
   }
 
   &-menu-button {
+    position: relative;
     width: 100px;
     height: 60px;
     display: inline-flex;
@@ -180,6 +181,17 @@ $header-surface: #ffffff;
   &-menu-button-active {
     border-color: $header-primary;
     color: $header-primary;
+  }
+
+  &-new-chat-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ff3b30;
+    border: 2px solid #ffffff;
   }
 
   &-write-button {

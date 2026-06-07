@@ -3,24 +3,14 @@ import {useAuthStore} from "../../../store/authStore.js";
 import {apiClient} from "../../../api/apiClient.js";
 import {useRef} from "react";
 
-function ChatInputForm({ currentChatRoom, isBottom, setIsBottom }) {
+function ChatInputForm({ currentChatRoom, setIsBottom }) {
 
-    const { clientRef, connected } = useWebsocket();
+    const { safePublish, clientRef, connected } = useWebsocket();
     const authUser = useAuthStore((state) => state.user);
     const inputRef = useRef(null);
 
     const publish = (message, messageType) => {
-        console.log("[CHAT:PUBLISH] publish request", {
-            destination: `/publish/chat/${currentChatRoom.chatRoomId}`,
-            connected,
-            clientConnected: clientRef?.current?.connected,
-            chatRoomId: currentChatRoom?.chatRoomId,
-            senderEmail: authUser?.email,
-            messageType,
-            message,
-        }); //로그
-
-        clientRef.current.publish({
+        safePublish({
             destination: `/publish/chat/${currentChatRoom.chatRoomId}`,
             body: JSON.stringify({
                 senderEmail: authUser.email,
@@ -40,7 +30,7 @@ function ChatInputForm({ currentChatRoom, isBottom, setIsBottom }) {
             chatRoomId: currentChatRoom?.chatRoomId,
         }); //로그
 
-        if (msg.length >= 1 && connected && clientRef?.current?.connected) {
+        if (msg.length >= 1) {
             publish(msg, "TEXT");
         } else {
             console.log("[CHAT:INPUT] send text blocked", {
@@ -57,6 +47,7 @@ function ChatInputForm({ currentChatRoom, isBottom, setIsBottom }) {
 
     const sendImage = async (e) => {
         const file = e.target.files[0];
+        if (!file) return;
 
         console.log("[CHAT:INPUT] send image attempt", {
             hasFile: !!file,
@@ -65,27 +56,25 @@ function ChatInputForm({ currentChatRoom, isBottom, setIsBottom }) {
             clientConnected: clientRef?.current?.connected,
             chatRoomId: currentChatRoom?.chatRoomId,
         }); //로그
+        
+        const formData = new FormData();
+        formData.append("files", file);
 
-        if (file && connected && clientRef?.current?.connected) {
-            const formData = new FormData();
-            formData.append("files", file);
+        const response = await apiClient.post("/uploads/images", formData, {
+            headers: {"Content-Type": "multipart/form-data"}
+        });
 
-            const response = await apiClient.post("/uploads/images", formData, {
-                headers: {"Content-Type": "multipart/form-data"}
-            });
+        console.log("[CHAT:INPUT] image upload response", response.data); //로그
 
-            console.log("[CHAT:INPUT] image upload response", response.data); //로그
-
-            const imageUrl = response.data.data.imageUrls[0];
-            publish(imageUrl, "IMAGE");
-        } else {
-            console.log("[CHAT:INPUT] send image blocked", {
-                hasFile: !!file,
-                connected,
-                clientConnected: clientRef?.current?.connected,
-                clientExists: !!clientRef?.current,
-            });
-        } //로그
+        const imageUrl = response.data.data.imageUrls[0];
+        publish(imageUrl, "IMAGE");
+            
+        console.log("[CHAT:INPUT] send image blocked", {
+            hasFile: !!file,
+            connected,
+            clientConnected: clientRef?.current?.connected,
+            clientExists: !!clientRef?.current,
+        });//로그
 
         e.target.value = "";
         setIsBottom(true);

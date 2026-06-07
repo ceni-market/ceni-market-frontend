@@ -16,7 +16,7 @@ export const apiClient = axios.create({
 });
 
 // 공통 리프레시 함수 (중복 제거)
-const refreshAccessToken = async () => {
+export const refreshAccessToken = async () => {
     const { refreshToken, login, logout } = useAuthStore.getState();
     if (!refreshToken) throw new Error("리프레시 토큰 없음");
 
