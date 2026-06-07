@@ -11,7 +11,6 @@ const BACKEND_URL = import.meta.env.VITE_APP_API_URL;
 export const useWebsocket = () => useContext(WebsocketContext);
 
 function WebSocketProvider({children}) {
-    const [connected, setConnected] = useState(false);
     const user = useAuthStore((state) => state.user);
     const accessToken = useAuthStore((state) => state.accessToken); //Zustand 구독
     const [notification, setNotification] = useState(null);
@@ -41,22 +40,9 @@ function WebSocketProvider({children}) {
             }, Math.max(0, delay));
         }
 
-        console.log("[WS] effect run", {
-            hasAccessToken: !!accessToken,
-            userId: user?.id,
-            userEmail: user?.email,
-            backendUrl: BACKEND_URL,
-        }); //로그
-
         if (!accessToken || !user) {
-            console.log("[WS] skip connect: missing auth data", {
-                hasAccessToken: !!accessToken,
-                hasUser: !!user,
-            }); //로그
-
             clientRef.current?.deactivate();
             clientRef.current = null;
-            setConnected(false);
             return;
         }
 
@@ -65,27 +51,20 @@ function WebSocketProvider({children}) {
                 Authorization: `Bearer ${accessToken}`,
             }, reconnectDelay: 5000,
 
-            debug: (message) => {
-                console.log("[WS:STOMP]", message);
-            },
+            // debug: (message) => {
+            //     console.log("[WS:STOMP]", message);
+            // },
             onWebSocketError: (event) => {
                 console.log("[WS] websocket error", event);
             }, //로그
 
             onConnect: () => {
-                setConnected(true);
-
                 // 끊긴 사이에 쌓인 메시지 전송
                 if (connectPendingQueueRef.current.length > 0) { //쌓인 메시지가 있으면
-                    connectPendingQueueRef.current.forEach(params => client.publish(params)); //메시지 전송
+                    const queue = connectPendingQueueRef.current;
                     connectPendingQueueRef.current = []; //큐 초기화
+                    queue.forEach(params => client.publish(params)); //메시지 전송
                 }
-
-                console.log("[WS] connected", {
-                    connected: client.connected,
-                    userId: user.id,
-                    notificationDestination: `/user/queue/notification`,
-                }); //로그
 
                 // 연결되면 클라이언트에 알림 허용 창 노출
                 Notification.requestPermission().then((permission) => {
@@ -93,15 +72,11 @@ function WebSocketProvider({children}) {
                         // 허용하면 알림 경로 구독 시작
                         client.subscribe(`/user/queue/notification`, (message) => {
                             const msg = JSON.parse(message.body);
-
-                            console.log("[WS] notification received", msg); //로그
-
                             setNotification(msg);
                         });
                         console.log("Subscribed Notification Websocket!!");
                     // }
                 });
-                console.log("[WS] subscribed notification", `/user/queue/notification/`); //로그
 
                 //구독 완료하면 메시지 하나 보내기
                 client.publish({
@@ -115,7 +90,6 @@ function WebSocketProvider({children}) {
             },
             onDisconnect: () => {
                 console.log("[WS] disconnected");
-                setConnected(false);
             },
 
             onWebSocketClose: (event) => {
@@ -124,7 +98,6 @@ function WebSocketProvider({children}) {
                     reason: event?.reason,
                     wasClean: event?.wasClean,
                 });
-                setConnected(false);
             },
 
             onStompError: (frame) => {
@@ -132,14 +105,8 @@ function WebSocketProvider({children}) {
                     headers: frame?.headers,
                     body: frame?.body,
                 });
-                setConnected(false);
             },
         })
-
-        console.log("[WS] activate client", {
-            connectUrl: `${BACKEND_URL}/connect`,
-            reconnectDelay: 5000,
-        }); //로그
 
         client.activate();
         clientRef.current = client;
@@ -151,7 +118,7 @@ function WebSocketProvider({children}) {
     }, [accessToken, user])
 
     return (
-        <WebsocketContext.Provider value={{clientRef, notification, setNotification, connected, safePublish}}>
+        <WebsocketContext.Provider value={{clientRef, notification, setNotification, safePublish}}>
             {children}
         </WebsocketContext.Provider>
     );
