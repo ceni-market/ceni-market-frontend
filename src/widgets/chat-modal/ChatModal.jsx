@@ -10,7 +10,13 @@ import {useQuery} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 import {useAuthStore} from "../../store/authStore.js";
 
-function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomId }) {
+function ChatModal({ isChatOpen,
+                       onClose,
+                       createdChatRoomId,
+                       setCreatedChatRoomId,
+                       notification,
+                       notiChatRoomId,
+                       setNotiChatRoomId}) {
     //모달 컨트롤 함수들
     const {position, isDragging, handleHeaderPointerDown} = useModal(isChatOpen);
 
@@ -33,9 +39,11 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
             selectedChatRoomId,
             clickedChatRoomId: myChatRoomData?.chatRoomId,
             room: myChatRoomData,
-        });
+        }); //로그
+
         if(selectedChatRoomId === myChatRoomData.chatRoomId) {
-                console.log("[CHAT:ROOM] close selected room", myChatRoomData.chatRoomId);
+                console.log("[CHAT:ROOM] close selected room", myChatRoomData.chatRoomId); //로그
+
                 setCurrentChatRoom(null);
                 setIsVisible(false);
                 setChatHistories([]);
@@ -48,19 +56,29 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
         }
     }
 
+    //현재 스크롤이 맨 아래에 있는지 판별한 값을 저장하는 State. ChatMessageList, ChatInputForm에서 둘  사용
+    const [isBottom, setIsBottom] = useState(true);
     const [lastMessageContent, setLastMessageContent] = useState("");
 
     //채팅방 데이터 요청
     const fetchMyChatRooms = async () => {
-        console.log("[CHAT:ROOMS] fetch request");
+        console.log("[CHAT:ROOMS] fetch request"); //로그
+
         const response = await apiClient.get(
             `/chat/mychat`,
             {}
         )
+        //lastMessageAt순으로 정렬
+        const chatRoomDatas = response.data.data.sort((a, b) => {
+            return new Date(b.lastMessageAt) - new Date(a.lastMessageAt);
+        })
+        setMyChatRoomDatas(chatRoomDatas);
+
         console.log("[CHAT:ROOMS] fetch response", {
             count: response.data.data?.length,
             data: response.data.data,
-        });
+        }); //로그
+
         setMyChatRoomDatas(response.data.data);
         return response.data.data ?? [];
     }
@@ -70,19 +88,23 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
         queryFn: () => fetchMyChatRooms(),
     })
 
+    //새로만든 채팅방 바로 보이기
     useEffect(() => {
         console.log("[CHAT:ROOM] created room effect", {
             createdChatRoomId,
             roomCount: myChatRoomDatas.length,
             rooms: myChatRoomDatas,
-        });
+        }); //로그
+
         if(myChatRoomDatas.length === 0 || !createdChatRoomId) return ;
         const newChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === createdChatRoomId);
+
         console.log("[CHAT:ROOM] created room lookup", {
             createdChatRoomId,
             found: !!newChatRoom,
             newChatRoom,
-        });
+        }); //로그
+
         if(!newChatRoom) return ;
         setIsVisible(true);
         setCurrentChatRoom(newChatRoom);
@@ -95,31 +117,50 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
     const fetchMyChatHistories = async (chatRoomId) => {
         console.log("[CHAT:HISTORY] fetch request", {
             chatRoomId,
-        });
+        }); //로그
+
         await apiClient.get(
             `/chat/history/${chatRoomId}`,
             {}
-        ).then(res => {
+        ).then(response => {
             console.log("[CHAT:HISTORY] fetch response", {
                 chatRoomId,
-                count: res.data.data?.length,
-                data: res.data.data,
-            });
-            setChatHistories(res.data.data);
+                count: response.data.data?.length,
+                data: response.data.data,
+            }); //로그
+
+            setChatHistories(response.data.data);
         }).catch(error => {
             console.log("[CHAT:HISTORY] fetch error", {
                 chatRoomId,
                 status: error.response?.status,
                 data: error.response?.data,
                 message: error.message,
-            });
-            console.log(error);
+            }); //로그
+
+            console.error(error);
             console.log("잘못된 채팅방 ID입니다.");
         });
     }
 
     //선택한 채팅방 색 강조
     const [selectedChatRoomId, setSelectedChatRoomId] = useState(0);
+
+    //알림오면 채팅방 업데이트
+    useEffect(() => {
+        refetchChatRooms();
+    }, [notification]);
+
+    //알림 클릭 시 채팅방 열기
+    useEffect(() => {
+        const targetChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === Number(notiChatRoomId));
+        if (!targetChatRoom) return;
+            setIsVisible(true);
+            setCurrentChatRoom(targetChatRoom);
+            fetchMyChatHistories(targetChatRoom.chatRoomId);
+            setSelectedChatRoomId(targetChatRoom.chatRoomId);
+            setNotiChatRoomId(null);
+    }, [notiChatRoomId, myChatRoomDatas]);
 
     //게시글 보기
     const goToListingDetail = () => {
@@ -184,6 +225,7 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
         setContextMenu({ x: e.clientX, y: e.clientY, chatRoomId });
     };
 
+    //채팅방 나가기
     const leaveChatRoom = async (chatRoomId) => {
         await apiClient.delete(`/chat/${chatRoomId}`);
         setContextMenu(null);
@@ -262,10 +304,14 @@ function ChatModal({ isChatOpen, onClose, createdChatRoomId, setCreatedChatRoomI
                                              currentChatRoom={currentChatRoom}
                                              setLastMessageContent={setLastMessageContent}
                                              refetchChatRooms={refetchChatRooms}
+                                             isBottom={isBottom}
+                                             setIsBottom={setIsBottom}
                             />
 
                             {/* 분리된 하단 입력창 */}
                             <ChatInputForm currentChatRoom={currentChatRoom}
+                                           isBottom={isBottom}
+                                           setIsBottom={setIsBottom}
                             />
                         </section>) :
                         (<p className="plz-choose">채팅방을 선택하세요.</p>)

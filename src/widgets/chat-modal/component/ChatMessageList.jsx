@@ -4,15 +4,11 @@ import {useMutation} from "@tanstack/react-query";
 import {apiClient} from "../../../api/apiClient.js";
 // import MessageToast from "./MessageToast.jsx";
 
-function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent, refetchChatRooms }) {
+function ChatMessageList({chatHistories, currentChatRoom, setLastMessageContent, refetchChatRooms, isBottom, setIsBottom}) {
     //새로 온 메시지 저장 State
     const [messages, setMessages] = useState([]);
-    //현재 스크롤이 맨 아래에 있는지 판별한 값을 저장하는 State
-    const [isBottom, setIsBottom] = useState(true);
-
     //Context에 저장한 웹소켓 가져오기
     const { clientRef, connected } = useWebsocket();
-
 
     useEffect(() => {
         console.log("[CHAT:SUB] effect run", {
@@ -21,7 +17,8 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
             clientConnected: clientRef?.current?.connected,
             chatRoomId: currentChatRoom?.chatRoomId,
             currentChatRoom,
-        });
+        }); //로그
+
         setMessages([]);
 
         if (!connected || !clientRef?.current || !currentChatRoom?.chatRoomId) {
@@ -30,27 +27,29 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
                 clientExists: !!clientRef?.current,
                 clientConnected: clientRef?.current?.connected,
                 chatRoomId: currentChatRoom?.chatRoomId,
-            });
+            }); //로그
             return;
         }
 
-        console.log("[CHAT:SUB] subscribe", `/queue/chat/${currentChatRoom.chatRoomId}`);
-        const subscription = clientRef.current.subscribe(
-            `/queue/chat/${currentChatRoom.chatRoomId}`,
-            (frame) => {
+        console.log("[CHAT:SUB] subscribe", `/queue/chat/${currentChatRoom.chatRoomId}`); //로그
+
+        const subscription = clientRef.current.subscribe(`/queue/chat/${currentChatRoom.chatRoomId}`, (frame) => {
                 const msg = JSON.parse(frame.body);
+
                 console.log("[CHAT:SUB] message received", {
                     destination: `/queue/chat/${currentChatRoom.chatRoomId}`,
                     rawBody: frame.body,
                     parsed: msg,
-                });
+                }); //로그
+
                 setLastMessageContent(msg);
                 setMessages((prev) => [...prev, msg]);
             }
         );
 
         return () => {
-            console.log("[CHAT:SUB] unsubscribe", `/queue/chat/${currentChatRoom.chatRoomId}`);
+            console.log("[CHAT:SUB] unsubscribe", `/queue/chat/${currentChatRoom.chatRoomId}`); //로그
+
             subscription.unsubscribe();
         };
     }, [connected, currentChatRoom?.chatRoomId]);
@@ -59,12 +58,13 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
     const updateLastRead = async () => {
         console.log("[CHAT:READ] update request", {
             chatRoomId: currentChatRoom?.chatRoomId,
-        });
+        }); //로그
+
         const response = await apiClient.get(
             `/chat/${currentChatRoom.chatRoomId}/readAt`,
             {}
         )
-        console.log("[CHAT:READ] update response", response.data);
+        console.log("[CHAT:READ] update response", response.data); //로그
     }
 
     const { mutate: reUpdateLastRead, isLoading: updateLastReadLoading, error: updateLastReadError, status: success} = useMutation({
@@ -91,7 +91,8 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
             chatRoomId: currentChatRoom?.chatRoomId,
             historyCount: chatHistories?.length,
             histories: chatHistories,
-        });
+        }); //로그
+
         updateLastRead();
         scrollToBottominstant();
     }, [chatHistories]);
@@ -102,7 +103,8 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
             chatRoomId: currentChatRoom?.chatRoomId,
             messageCount: messages.length,
             messages,
-        });
+        }); //로그
+
         if(isBottom) {
             scrollToBottomSmooth();
         }
@@ -123,6 +125,21 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
         return () => elem.removeEventListener("scroll", handleScroll);
     }, []);
 
+    //내가 채팅 입력 시 스크롤 위치와 상관없이 맨 아래로 가도록 하는
+    const onSendMessage = () => {
+        setIsBottom(true);
+        scrollToBottominstant();
+    }
+
+    //메시지 시간 포멧
+    const formattedCreateAt = (message) => {
+        return new Intl.DateTimeFormat('ko-KR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        }).format(new Date(message.createdAt));
+    }
+
     //토스트 팝업
     // const [messageToast, setMessageToast] = useState(false);
 
@@ -132,14 +149,26 @@ function ChatMessageList({ chatHistories, currentChatRoom, setLastMessageContent
             {/*<p className="chat-modal-date">2026년 05월 01일</p>*/}
             {allMessages.map((message, index) => {
 
-                return (<div className={`chat-message chat-message-${message.senderEmail === currentChatRoom.contactUserInfo?.email ? "partner" : "me" }`} key={message.index}>
+                const time = formattedCreateAt(message);
 
-                    {message.contentType === 'IMAGE' ? (
-                        <img className="chat-message-image" src={message.message} alt="전송된 이미지" />
+                let isVisible = true;
+                if (index < allMessages.length - 1) {
+                    const nextMessage = allMessages[index + 1];
+                    isVisible = nextMessage.senderEmail !== message.senderEmail ||
+                        formattedCreateAt(nextMessage) !== formattedCreateAt(message);
+                }
+
+                return (<div
+                    className={`chat-message chat-message-${message.senderEmail === currentChatRoom.contactUserInfo?.email ? "partner" : "me"}`}
+                    key={message.createdAt}>
+
+                    {message.messageType === 'IMAGE' ? (
+                        <img className="chat-message-image" src={message.message} alt="전송된 이미지"/>
                     ) : (
                         <p className="chat-message-bubble">{message.message}</p>
                     )}
-                    <time>{message.time}</time>
+                    <time style={{visibility: isVisible ? "visible" : "hidden"}}>{time}</time>
+
                 </div>)
             })}
             {/*{messageToast && (*/}

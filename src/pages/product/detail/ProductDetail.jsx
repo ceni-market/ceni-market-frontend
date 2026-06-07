@@ -131,7 +131,7 @@ function ProductDetail() {
     fetchProductDetails();
   }, [productId]);
 
-  //해당 게시물에 대한 채팅방 생성 or 입장 코드
+  //해당 게시물에 대한 채팅방 생성 or 입장 하는 코드
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [createdChatRoomId, setCreatedChatRoomId] = useState(0);
 
@@ -141,9 +141,6 @@ function ProductDetail() {
       sellerId: Number(product.seller.id),
       buyerId: Number(authUser.id)
     }).then((res) => {
-      console.log(Number(productId));
-      console.log(Number(product.seller.id));
-      console.log(Number(authUser.id));
       setIsChatOpen(true);
       setCreatedChatRoomId(res.data.data.chatRoomId);
     }).catch((err) => {

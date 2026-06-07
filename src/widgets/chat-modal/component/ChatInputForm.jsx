@@ -3,7 +3,7 @@ import {useAuthStore} from "../../../store/authStore.js";
 import {apiClient} from "../../../api/apiClient.js";
 import {useRef} from "react";
 
-function ChatInputForm({ currentChatRoom }) {
+function ChatInputForm({ currentChatRoom, isBottom, setIsBottom }) {
 
     const { clientRef, connected } = useWebsocket();
     const authUser = useAuthStore((state) => state.user);
@@ -18,7 +18,8 @@ function ChatInputForm({ currentChatRoom }) {
             senderEmail: authUser?.email,
             messageType,
             message,
-        });
+        }); //로그
+
         clientRef.current.publish({
             destination: `/publish/chat/${currentChatRoom.chatRoomId}`,
             body: JSON.stringify({
@@ -31,12 +32,14 @@ function ChatInputForm({ currentChatRoom }) {
 
     const sendMessage = () => {
         const msg = inputRef.current.value.trim();
+
         console.log("[CHAT:INPUT] send text attempt", {
             hasMessage: msg.length >= 1,
             connected,
             clientConnected: clientRef?.current?.connected,
             chatRoomId: currentChatRoom?.chatRoomId,
-        });
+        }); //로그
+
         if (msg.length >= 1 && connected && clientRef?.current?.connected) {
             publish(msg, "TEXT");
         } else {
@@ -46,19 +49,23 @@ function ChatInputForm({ currentChatRoom }) {
                 clientConnected: clientRef?.current?.connected,
                 clientExists: !!clientRef?.current,
             });
-        }
+        } //로그
+
         inputRef.current.value = "";
+        setIsBottom(true);
     };
 
     const sendImage = async (e) => {
         const file = e.target.files[0];
+
         console.log("[CHAT:INPUT] send image attempt", {
             hasFile: !!file,
             fileName: file?.name,
             connected,
             clientConnected: clientRef?.current?.connected,
             chatRoomId: currentChatRoom?.chatRoomId,
-        });
+        }); //로그
+
         if (file && connected && clientRef?.current?.connected) {
             const formData = new FormData();
             formData.append("files", file);
@@ -66,7 +73,9 @@ function ChatInputForm({ currentChatRoom }) {
             const response = await apiClient.post("/uploads/images", formData, {
                 headers: {"Content-Type": "multipart/form-data"}
             });
-            console.log("[CHAT:INPUT] image upload response", response.data);
+
+            console.log("[CHAT:INPUT] image upload response", response.data); //로그
+
             const imageUrl = response.data.data.imageUrls[0];
             publish(imageUrl, "IMAGE");
         } else {
@@ -76,8 +85,10 @@ function ChatInputForm({ currentChatRoom }) {
                 clientConnected: clientRef?.current?.connected,
                 clientExists: !!clientRef?.current,
             });
-        }
+        } //로그
+
         e.target.value = "";
+        setIsBottom(true);
     };
 
     return (
