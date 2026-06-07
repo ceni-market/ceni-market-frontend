@@ -61,7 +61,7 @@ function WebSocketProvider({children}) {
         }
 
         const client = new Client({
-            webSocketFactory: () => new SockJS(`https://www.ceni-market.site/connect`), connectHeaders: {
+            webSocketFactory: () => new SockJS(`${BACKEND_URL}/connect`), connectHeaders: {
                 Authorization: `Bearer ${accessToken}`,
             }, reconnectDelay: 5000,
 
