@@ -44,15 +44,7 @@ function ChatModal({
     const [isVisible, setIsVisible] = useState(false);
 
     const getCurrentChatRoom = (myChatRoomData) => {
-        console.log("[CHAT:ROOM] select room", {
-            selectedChatRoomId,
-            clickedChatRoomId: myChatRoomData?.chatRoomId,
-            room: myChatRoomData,
-        }); //로그
-
         if (selectedChatRoomId === myChatRoomData.chatRoomId) {
-            console.log("[CHAT:ROOM] close selected room", myChatRoomData.chatRoomId); //로그
-
             setCurrentChatRoom(null);
             setIsVisible(false);
             setChatHistories([]);
@@ -72,8 +64,6 @@ function ChatModal({
 
     //채팅방 데이터 요청
     const fetchMyChatRooms = async () => {
-        console.log("[CHAT:ROOMS] fetch request"); //로그
-
         const response = await apiClient.get(
             `/chat/mychat`,
             {}
@@ -83,11 +73,6 @@ function ChatModal({
             return new Date(b.lastMessageAt) - new Date(a.lastMessageAt);
         })
         setMyChatRoomDatas(chatRoomDatas);
-
-        console.log("[CHAT:ROOMS] fetch response", {
-            count: response.data.data?.length,
-            data: response.data.data,
-        }); //로그
 
         setMyChatRoomDatas(response.data.data);
         return response.data.data ?? [];
@@ -100,20 +85,8 @@ function ChatModal({
 
     //새로만든 채팅방 바로 보이기
     useEffect(() => {
-        console.log("[CHAT:ROOM] created room effect", {
-            createdChatRoomId,
-            roomCount: myChatRoomDatas.length,
-            rooms: myChatRoomDatas,
-        }); //로그
-
         if (myChatRoomDatas.length === 0 || !createdChatRoomId) return;
         const newChatRoom = myChatRoomDatas.find(chatRoom => chatRoom.chatRoomId === createdChatRoomId);
-
-        console.log("[CHAT:ROOM] created room lookup", {
-            createdChatRoomId,
-            found: !!newChatRoom,
-            newChatRoom,
-        }); //로그
 
         if (!newChatRoom) return;
         setIsVisible(true);
@@ -125,29 +98,12 @@ function ChatModal({
 
     //채팅 메시지 기록 데이터 요청
     const fetchMyChatHistories = async (chatRoomId) => {
-        console.log("[CHAT:HISTORY] fetch request", {
-            chatRoomId,
-        }); //로그
-
         await apiClient.get(
             `/chat/history/${chatRoomId}`,
             {}
         ).then(response => {
-            console.log("[CHAT:HISTORY] fetch response", {
-                chatRoomId,
-                count: response.data.data?.length,
-                data: response.data.data,
-            }); //로그
-
             setChatHistories(response.data.data);
         }).catch(error => {
-            console.log("[CHAT:HISTORY] fetch error", {
-                chatRoomId,
-                status: error.response?.status,
-                data: error.response?.data,
-                message: error.message,
-            }); //로그
-
             console.error(error);
             console.log("잘못된 채팅방 ID입니다.");
         });
