@@ -3,6 +3,7 @@ import {Link, NavLink, useNavigate} from 'react-router-dom';
 import ChatModal from '../chat-modal/ChatModal.jsx';
 import './AppHeader.scss';
 import {useAuthStore} from "../../store/authStore.js";
+import {useWebsocket} from "../../WebSocketProvider.jsx";
 
 const AUTH_STORAGE_KEY = 'ceni-market-auth';
 const AUTH_CHANGE_EVENT = 'ceni-market-auth-change';
@@ -49,6 +50,31 @@ function AppHeader() {
   const isLoggedIn = !!accessToken;
   const actions = isLoggedIn ? LOGGED_IN_ACTIONS : NAV_ACTIONS;
   const nav = useNavigate();
+
+  //Context에 저장한 웹소켓 가져오기
+  const { clientRef, notification, setNotification } = useWebsocket();
+  const [notiChatRoomId, setNotiChatRoomId] = useState(false);
+
+  //알림 생성 및 클릭 시 이동
+  useEffect(() => {
+    if(!notification) return;
+    if(!document.querySelector('.chat-modal') || document.hidden) {
+      if(clientRef.current?.connected && Notification.permission === "granted") {
+        const noti = new Notification('새로운 채팅이 도착했습니다.', {
+          body: notification.messageType === 'IMAGE' ? '[ 이미지 ]' : notification?.messagePreview,
+          badge: '세니마켓',
+        });
+        noti.onclick = () => {
+          window.focus();
+          setIsChatOpen(true);
+          setNotiChatRoomId(notification.chatRoomId);
+        }
+      }
+    } else {
+      setNotification(null);
+    }
+    return () => setNotification(null);
+  }, [notification])
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -107,7 +133,11 @@ function AppHeader() {
         </div>
       </header>
 
-      {isChatOpen && <ChatModal isChatOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />}
+      {isChatOpen && <ChatModal isChatOpen={isChatOpen}
+                                onClose={() => setIsChatOpen(false)}
+                                notification={notification}
+                                notiChatRoomId={notiChatRoomId}
+                                setNotiChatRoomId={setNotiChatRoomId} />}
     </>
   );
 }

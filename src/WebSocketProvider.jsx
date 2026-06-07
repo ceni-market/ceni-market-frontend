@@ -14,7 +14,7 @@ function WebSocketProvider({children}) {
     const [connected, setConnected] = useState(false);
     const accessToken = useAuthStore((state) => state.accessToken);
     const user = useAuthStore((state) => state.user);
-    const [messages, setMessages] = useState([]);
+    const [notification, setNotification] = useState(null);
 
     const clientRef = useRef(null)
 
@@ -24,13 +24,14 @@ function WebSocketProvider({children}) {
             userId: user?.id,
             userEmail: user?.email,
             backendUrl: BACKEND_URL,
-        });
+        }); //로그
 
         if (!accessToken || !user) {
             console.log("[WS] skip connect: missing auth data", {
                 hasAccessToken: !!accessToken,
                 hasUser: !!user,
-            });
+            }); //로그
+
             clientRef.current?.deactivate();
             clientRef.current = null;
             setConnected(false);
@@ -38,30 +39,41 @@ function WebSocketProvider({children}) {
         }
 
         const client = new Client({
-            webSocketFactory: () => new SockJS(`${BACKEND_URL}/connect`), connectHeaders: {
+            webSocketFactory: () => new SockJS(`https://www.ceni-market.site/connect`), connectHeaders: {
                 Authorization: `Bearer ${accessToken}`,
             }, reconnectDelay: 5000,
+
             debug: (message) => {
                 console.log("[WS:STOMP]", message);
             },
             onWebSocketError: (event) => {
                 console.log("[WS] websocket error", event);
-            },
+            }, //로그
+
             onConnect: () => {
                 setConnected(true);
                 console.log("[WS] connected", {
                     connected: client.connected,
                     userId: user.id,
                     notificationDestination: `/queue/notification/${user.id}`,
+                }); //로그
+
+                // 연결되면 클라이언트에 알림 허용 창 노출
+                Notification.requestPermission().then((permission) => {
+                    // if(permission === "granted") { <-- 허용 안해도 구독은 해야함. 이거로 채팅방 목록 업데이트 중. 알림 띄우는건 허용여부에 따라 달라짐.
+                        // 허용하면 알림 경로 구독 시작
+                        client.subscribe(`/user/queue/notification`, (message) => {
+                            const msg = JSON.parse(message.body);
+
+                            console.log("[WS] notification received", msg); //로그
+
+                            setNotification(msg);
+                        });
+                        console.log("Subscribed Notification Websocket!!");
+                    // }
                 });
-                // 연결되면 알림 경로 구독 시작
-                client.subscribe(`/queue/notification/${user.id}`, (message) => {
-                    const msg = JSON.parse(message.body);
-                    console.log("[WS] notification received", msg);
-                    console.log(msg.content);
-                    console.log(msg.messagePreview);
-                });
-                console.log("[WS] subscribed notification", `/queue/notification/${user.id}`);
+                console.log("[WS] subscribed notification", `/user/queue/notification/`);
+
                 //구독 완료하면 메시지 하나 보내기
                 client.publish({
                     destination: `/publish/notification/${user.id}`, headers: {
@@ -98,7 +110,8 @@ function WebSocketProvider({children}) {
         console.log("[WS] activate client", {
             connectUrl: `${BACKEND_URL}/connect`,
             reconnectDelay: 5000,
-        });
+        }); //로그
+
         client.activate();
         clientRef.current = client;
 
@@ -106,7 +119,7 @@ function WebSocketProvider({children}) {
     }, [accessToken, user])
 
     return (
-        <WebsocketContext.Provider value={{ clientRef, connected }}>
+        <WebsocketContext.Provider value={{clientRef, notification, setNotification, connected}}>
             {children}
         </WebsocketContext.Provider>
     );
